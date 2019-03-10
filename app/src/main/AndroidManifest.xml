@@ -11,8 +11,6 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name=".InstagramAuthoriseActivity">
-        </activity>
-        <activity android:name=".AccountListActivity">
             <intent-filter>
                 <action
                         android:name="android.intent.action.MAIN"
@@ -29,6 +27,8 @@
                         android:host="olliechick.me"
                         android:path="/instagram-unfollowers"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".AccountListActivity">
         </activity>
     </application>
 
