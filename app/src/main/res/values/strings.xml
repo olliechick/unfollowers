@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Instagram Unfollowers</string>
+    <string name="app_name" translatable="false">Unfollowers by Ollie</string>
+    <string name="login_to_ig">Log in with Instagram</string>
+    <string name="log_in">Log in</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>
