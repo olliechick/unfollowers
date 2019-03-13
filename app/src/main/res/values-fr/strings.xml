@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_subtitle">par Ollie</string>
     <string name="login_to_ig">Se connecter avec instagram</string>
     <string name="log_in">Connexion</string>
     <string name="username">Nom d\'utilisateur</string>
     <string name="password">Mot de passe</string>
-    <string name="app_name_subtitle">par Ollie</string>
+    <string name="error_incorrect_password">Ce mot de passe est incorrect</string>
+    <string name="error_empty_field">Ce champ est requis</string>
 </resources>
