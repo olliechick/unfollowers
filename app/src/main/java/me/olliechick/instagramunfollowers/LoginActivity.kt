@@ -18,7 +18,6 @@ import org.jetbrains.anko.uiThread
 class LoginActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
@@ -31,11 +30,12 @@ class LoginActivity : Activity() {
         else if (password.text.isEmpty()) emptyFieldError(password)
         else {
             toast("Logging in...")
+            //todo block UI to avoid user pressing button more than once (see how default login activity does it)
 
-            instagram =
-                Instagram4Android.builder().username(username.text.toString()).password(password.text.toString())
-                    .build()
+            instagram = Instagram4Android.builder()
+                .username(username.text.toString()).password(password.text.toString()).build()
             instagram!!.setup()
+
             doAsync {
                 val instagramLoginResult = instagram!!.login()
                 val loginSuccess = instagramLoginResult.status == "ok"
@@ -44,6 +44,7 @@ class LoginActivity : Activity() {
                     if (loginSuccess) openAccountList()
                     else wrongPassword()
                 }
+
             }
         }
     }
@@ -58,6 +59,7 @@ class LoginActivity : Activity() {
     }
 
     private fun openAccountList() {
+
         val intent = Intent(this, AccountListActivity::class.java)
         startActivity(intent)
     }
