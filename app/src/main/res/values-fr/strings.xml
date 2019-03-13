@@ -4,4 +4,5 @@
     <string name="log_in">Connexion</string>
     <string name="username">Nom d\'utilisateur</string>
     <string name="password">Mot de passe</string>
+    <string name="app_name_subtitle">par Ollie</string>
 </resources>
