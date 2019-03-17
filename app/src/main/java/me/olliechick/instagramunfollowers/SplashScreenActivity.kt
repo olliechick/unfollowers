@@ -35,6 +35,7 @@ class SplashScreenActivity : Activity() {
 
         if (username == null) goToLoginPage()
         else {
+            //todo figure out why we never get here
             val context = this
             toast("Logging in...")
             doAsync {
