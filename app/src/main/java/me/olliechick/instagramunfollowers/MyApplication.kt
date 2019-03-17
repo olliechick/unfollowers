@@ -7,5 +7,6 @@ class MyApplication : Application() {
 
     companion object {
         var instagram: Instagram4Android? = null
+        val prefsFile = "me.olliechick.instagramunfollowers.prefs"
     }
 }

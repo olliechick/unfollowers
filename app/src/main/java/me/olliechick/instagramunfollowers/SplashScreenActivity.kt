@@ -4,11 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import me.olliechick.instagramunfollowers.MyApplication.Companion.prefsFile
 import org.jetbrains.anko.toast
 
 class SplashScreenActivity : Activity() {
-
-    private val MY_PREFS_NAME = "InstagramUnfollowers"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val totalMillis = 500
@@ -27,7 +26,7 @@ class SplashScreenActivity : Activity() {
     }
 
     private fun routeToAppropriatePage() {
-        val prefs = getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         val username = prefs.getString("username", null)
 
         if (username == null) {
