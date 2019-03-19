@@ -1,5 +1,6 @@
 package me.olliechick.instagramunfollowers
 
+import android.arch.persistence.room.Room
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,12 +11,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ArrayAdapter
 import me.olliechick.instagramunfollowers.MyApplication.Companion.logout
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 
 class AccountListActivity : AppCompatActivity() {
     private lateinit var accountList: RecyclerView
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +27,13 @@ class AccountListActivity : AppCompatActivity() {
         actionBar?.title = "Accounts"
 
         populateList()
-
     }
 
     var accounts: List<Account> = listOf()
         set(value) {
             field = value
             accountList.adapter = AccountAdapter(this, field) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.get_url()))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/${it.username}/")) //todo change to open unfollower list
                 startActivity((intent))
             }
         }
@@ -42,8 +43,6 @@ class AccountListActivity : AppCompatActivity() {
         val inflater = menuInflater
         inflater.inflate(R.menu.mainmenu, menu)
         return super.onCreateOptionsMenu(menu)
-//        actionBar?.menu
-//        actionBar?.inflate
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -69,36 +68,29 @@ class AccountListActivity : AppCompatActivity() {
     }
 
     private fun populateList() {
-        accountList = findViewById<RecyclerView>(R.id.accountList)
+        accountList = findViewById(R.id.accountList)
         val layoutManager = LinearLayoutManager(this)
         accountList.layoutManager = layoutManager
 
-        accounts = listOf(
-            Account("Ollie Chick", "ollienickchick"),
-            Account("Instagram", "instagram"),
-            Account("adam", "adam"),
-            Account("george", "george"),
-            Account("shosahna", "shosahna"),
-            Account("1"),
-            Account("2"),
-            Account("3"),
-            Account("4"),
-            Account("5"),
-            Account("6"),
-            Account("7"),
-            Account("8"),
-            Account("9"),
-            Account("a"),
-            Account("b"),
-            Account("c"),
-            Account("d"),
-            Account("e"),
-            Account("f"),
-            Account("g"),
-            Account("h"),
-            Account("i"),
-            Account("j")
-        )
+        doAsync {
+
+            db = Room.databaseBuilder(
+                applicationContext,
+                AppDatabase::class.java, "db"
+            ).build()
+            val dao = db.accountDao()
+
+            //add test data
+            dao.insertAll(
+                Account(1, "Ollie Chick", "ollienickchick"),
+                Account(2, "Instagram", "instagram"),
+                Account(3, "adam", "adam"),
+                Account(4, "george", "george"),
+                Account(5, "shosahna", "shosahna")
+            )
+
+            accounts = db.accountDao().getAll()
+        }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
         accountList.addItemDecoration(decoration)
