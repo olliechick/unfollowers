@@ -33,7 +33,10 @@ class AccountListActivity : AppCompatActivity() {
         set(value) {
             field = value
             accountList.adapter = AccountAdapter(this, field) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/${it.username}/")) //todo change to open unfollower list
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://www.instagram.com/${it.username}/")
+                ) //todo change to open unfollower list
                 startActivity((intent))
             }
         }
@@ -80,16 +83,19 @@ class AccountListActivity : AppCompatActivity() {
             ).build()
             val dao = db.accountDao()
 
-            //add test data
-            dao.insertAll(
-                Account(1, "Ollie Chick", "ollienickchick"),
-                Account(2, "Instagram", "instagram"),
+            accounts = db.accountDao().getAll()
+
+            if (accounts.isEmpty()) dao.insertAll(
+                Account(1, "ollienickchick", "Ollie Chick"),
+                Account(2, "instagram", "Instagram"),
                 Account(3, "adam", "adam"),
                 Account(4, "george", "george"),
                 Account(5, "shosahna", "shosahna")
             )
 
             accounts = db.accountDao().getAll()
+
+
         }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
