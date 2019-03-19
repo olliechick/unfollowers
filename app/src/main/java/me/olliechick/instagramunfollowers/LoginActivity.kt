@@ -55,8 +55,8 @@ class LoginActivity : Activity() {
     }
 
     private fun wrongPassword() {
-                password.error = getString(R.string.error_incorrect_password)
-                password.requestFocus()
+        password.error = getString(R.string.error_incorrect_password)
+        password.requestFocus()
     }
 
     private fun openAccountList() {

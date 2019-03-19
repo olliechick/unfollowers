@@ -2,27 +2,40 @@ package me.olliechick.instagramunfollowers
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import me.olliechick.instagramunfollowers.MyApplication.Companion.logout
 import org.jetbrains.anko.toast
 
 class AccountListActivity : AppCompatActivity() {
+    private lateinit var accountList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_list)
-        populateList()
 
         val actionBar = supportActionBar
+        actionBar?.title = "Accounts"
 
-        actionBar?.setTitle("Accounts")
+        populateList()
 
     }
+
+    var accounts: List<Account> = listOf()
+        set(value) {
+            field = value
+            accountList.adapter = AccountAdapter(this, field) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.get_url()))
+                startActivity((intent))
+            }
+        }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
@@ -56,37 +69,38 @@ class AccountListActivity : AppCompatActivity() {
     }
 
     private fun populateList() {
-        val accountList = arrayListOf("item 1", "item 2", "item 3")
-        val prodAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, accountList)
-        val listView = findViewById<ListView>(R.id.listView)
-        listView.adapter = prodAdapter
+        accountList = findViewById<RecyclerView>(R.id.accountList)
+        val layoutManager = LinearLayoutManager(this)
+        accountList.layoutManager = layoutManager
 
-//        val accounts = arrayListOf<String>()
-//        try {
-//            val file = openFileInput("accounts.json")
-//            accounts = JSON.parse()
-//        } catch (e: FileNotFoundException) {
-//
-//        }
+        accounts = listOf(
+            Account("Ollie Chick", "ollienickchick"),
+            Account("Instagram", "instagram"),
+            Account("adam", "adam"),
+            Account("george", "george"),
+            Account("shosahna", "shosahna"),
+            Account("1"),
+            Account("2"),
+            Account("3"),
+            Account("4"),
+            Account("5"),
+            Account("6"),
+            Account("7"),
+            Account("8"),
+            Account("9"),
+            Account("a"),
+            Account("b"),
+            Account("c"),
+            Account("d"),
+            Account("e"),
+            Account("f"),
+            Account("g"),
+            Account("h"),
+            Account("i"),
+            Account("j")
+        )
 
-
-        /*
-        val context = this
-        doAsync {
-            if (instagram != null) {
-                // test api by getting my followers
-                val result = instagram!!.sendRequest(InstagramSearchUsernameRequest("ollienickchick"))
-                val followingResult = instagram!!.sendRequest(InstagramGetUserFollowersRequest(result.user.getPk()))
-                val listView = findViewById<ListView>(R.id.listView)
-                uiThread {
-                    val prodAdapter = ArrayAdapter<String>(context,
-                        android.R.layout.simple_list_item_1,
-                        followingResult.users.map { "${it.full_name} (${it.username})" })
-                    listView.adapter = prodAdapter
-                }
-
-            }
-
-        }*/
+        val decoration = DividerItemDecoration(this, layoutManager.orientation)
+        accountList.addItemDecoration(decoration)
     }
 }
