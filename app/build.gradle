@@ -36,7 +36,10 @@ dependencies {
     implementation 'com.github.charlieAndroidDev:Instagram4Android:0.2.7'
     implementation "org.jetbrains.anko:anko-commons:0.10.4"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0"
+
     implementation "android.arch.persistence.room:runtime:1.1.1"
     kapt "android.arch.persistence.room:compiler:1.1.1"
+    testImplementation "android.arch.persistence.room:testing:1.1.1"
+    implementation "android.arch.persistence.room:rxjava2:1.1.1"
 
 }

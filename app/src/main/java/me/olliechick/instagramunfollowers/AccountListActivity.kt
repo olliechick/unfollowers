@@ -5,15 +5,20 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
+import kotlinx.android.synthetic.main.activity_account_list.*
 import me.olliechick.instagramunfollowers.MyApplication.Companion.logout
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+
 
 class AccountListActivity : AppCompatActivity() {
     private lateinit var accountList: RecyclerView
@@ -25,6 +30,9 @@ class AccountListActivity : AppCompatActivity() {
 
         val actionBar = supportActionBar
         actionBar?.title = "Accounts"
+
+
+        fab.setOnClickListener { openAddAccountDialog() }
 
         populateList()
     }
@@ -100,5 +108,34 @@ class AccountListActivity : AppCompatActivity() {
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
         accountList.addItemDecoration(decoration)
+    }
+
+    private fun openAddAccountDialog() {
+        var accountName: String
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Add an account to track:")
+
+        // Set up the input
+        val input = EditText(this)
+
+        // Specify the type of input expected
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        // Set up the buttons
+        builder.setPositiveButton(
+            "Add"
+        ) { dialog, which -> addAccount(input.text.toString()) }
+
+        builder.setNegativeButton(
+            "Cancel"
+        ) { dialog, which -> dialog.cancel() }
+
+        builder.show()
+    }
+
+    private fun addAccount(accountName: String) {
+        toast("This is where I would add $accountName.")
+
     }
 }

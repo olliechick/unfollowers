@@ -3,6 +3,7 @@ package me.olliechick.instagramunfollowers
 import android.app.Application
 import android.content.SharedPreferences
 import dev.niekirk.com.instagram4android.Instagram4Android
+import org.jetbrains.anko.doAsync
 
 class MyApplication : Application() {
 
@@ -16,7 +17,10 @@ class MyApplication : Application() {
             instagram!!.setup()
 
             val instagramLoginResult = instagram!!.login()
-            Thread { saveCredentials(prefs, username, password) }
+            doAsync {
+                saveCredentials(prefs, username, password)
+            }
+
 
             return instagramLoginResult.status == "ok"
         }

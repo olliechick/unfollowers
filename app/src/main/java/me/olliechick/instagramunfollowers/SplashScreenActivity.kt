@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import me.olliechick.instagramunfollowers.MyApplication.Companion.login
 import me.olliechick.instagramunfollowers.MyApplication.Companion.loginFromSharedPrefs
 import me.olliechick.instagramunfollowers.MyApplication.Companion.prefsFile
 import org.jetbrains.anko.doAsync
@@ -33,11 +32,13 @@ class SplashScreenActivity : Activity() {
         val prefs = getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         val username = prefs.getString("username", null)
 
-        if (username == null) goToLoginPage()
+        if (username == null) {
+            toast("username is null")
+            goToLoginPage()
+        }
         else {
-            //todo figure out why we never get here
             val context = this
-            toast("Logging in...")
+            toast("Logging in to $username...")
             doAsync {
                 val loginSuccess = loginFromSharedPrefs(prefs)
                 uiThread {
@@ -45,7 +46,7 @@ class SplashScreenActivity : Activity() {
                         val intent = Intent(context, AccountListActivity::class.java)
                         startActivity(intent)
                     } else {
-                        toast("Your username and password no longer work :(")
+                        toast("Your username and password for $username no longer work :(")
                         goToLoginPage()
                     }
                 }

@@ -3,7 +3,6 @@ package me.olliechick.instagramunfollowers
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_login.*
@@ -62,16 +61,5 @@ class LoginActivity : Activity() {
     private fun openAccountList() {
         val intent = Intent(this, AccountListActivity::class.java)
         startActivity(intent)
-    }
-
-    /**
-     * Saves the username and password to the shared preferences.
-     * This means the user doesn't have to log in each time they start the app.
-     */
-    private fun saveCredentials(prefs: SharedPreferences, username: String, password: String) {
-        val prefsEditor = prefs.edit()
-        prefsEditor.putString("username", username)
-        prefsEditor.putString("password", password)
-        prefsEditor.apply()
     }
 }
