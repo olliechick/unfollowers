@@ -10,9 +10,10 @@ import android.widget.TextView
 
 class AccountAdapter(
     private val context: Context,
-    val accounts: List<Account>,
+    val accounts: ArrayList<Account>,
     val clickListener: (Account) -> Unit
 ) : RecyclerView.Adapter<AccountViewHolder>() {
+
     private var selectedIndex = RecyclerView.NO_POSITION
 
     override fun getItemCount(): Int = accounts.size

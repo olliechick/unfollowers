@@ -3,6 +3,8 @@ package me.olliechick.instagramunfollowers
 import android.app.Application
 import android.content.SharedPreferences
 import dev.niekirk.com.instagram4android.Instagram4Android
+import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest
+import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult
 import org.jetbrains.anko.doAsync
 
 class MyApplication : Application() {
@@ -63,5 +65,9 @@ class MyApplication : Application() {
         }
 
 
+        fun getAccount(username: String): InstagramSearchUsernameResult {
+            val result = MyApplication.instagram!!.sendRequest(InstagramSearchUsernameRequest(username))
+            return result
+        }
     }
 }

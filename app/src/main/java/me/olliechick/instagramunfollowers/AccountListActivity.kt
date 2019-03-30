@@ -14,10 +14,13 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_account_list.*
+import me.olliechick.instagramunfollowers.MyApplication.Companion.getAccount
 import me.olliechick.instagramunfollowers.MyApplication.Companion.logout
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 
 
 class AccountListActivity : AppCompatActivity() {
@@ -37,7 +40,7 @@ class AccountListActivity : AppCompatActivity() {
         populateList()
     }
 
-    var accounts: List<Account> = listOf()
+    var accounts: ArrayList<Account> = arrayListOf()
         set(value) {
             field = value
             accountList.adapter = AccountAdapter(this, field) {
@@ -78,32 +81,22 @@ class AccountListActivity : AppCompatActivity() {
         }
     }
 
+    private fun getAccountDao(): AccountDao {
+
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "db"
+        ).build()
+        return db.accountDao()
+    }
+
     private fun populateList() {
         accountList = findViewById(R.id.accountList)
         val layoutManager = LinearLayoutManager(this)
         accountList.layoutManager = layoutManager
 
         doAsync {
-
-            db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "db"
-            ).build()
-            val dao = db.accountDao()
-
-            accounts = db.accountDao().getAll()
-
-            if (accounts.isEmpty()) dao.insertAll(
-                Account(1, "ollienickchick", "Ollie Chick"),
-                Account(2, "instagram", "Instagram"),
-                Account(3, "adam", "adam"),
-                Account(4, "george", "george"),
-                Account(5, "shosahna", "shosahna")
-            )
-
-            accounts = db.accountDao().getAll()
-
-
+            accounts = ArrayList(getAccountDao().getAll())
         }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
@@ -111,7 +104,6 @@ class AccountListActivity : AppCompatActivity() {
     }
 
     private fun openAddAccountDialog() {
-        var accountName: String
         val builder = AlertDialog.Builder(this)
         builder.setMessage("Add an account to track:")
 
@@ -125,17 +117,37 @@ class AccountListActivity : AppCompatActivity() {
         // Set up the buttons
         builder.setPositiveButton(
             "Add"
-        ) { dialog, which -> addAccount(input.text.toString()) }
+        ) { _, _ -> addAccount(input.text.toString()) }
 
         builder.setNegativeButton(
             "Cancel"
-        ) { dialog, which -> dialog.cancel() }
+        ) { dialog, _ -> dialog.cancel() }
 
         builder.show()
     }
 
-    private fun addAccount(accountName: String) {
-        toast("This is where I would add $accountName.")
+    private fun addAccount(username: String) {
+        toast("Adding $username...")
+        val context = this
+        val dao = getAccountDao()
+        doAsync {
+            val result = getAccount(username)
+            uiThread {
+                Toast.makeText(context, result.status, Toast.LENGTH_SHORT).show()
+            }
+            val user = result.user
+            val name = user.full_name
+            val id = user.pk.toInt()
+            val newAccount = Account(id, username, name)
+            dao.insertAll(
+                newAccount
+            )
+            accounts.add(newAccount)
+            uiThread {
+                Toast.makeText(context, "Added $name", Toast.LENGTH_SHORT).show()
+                accountList.adapter?.notifyDataSetChanged()
+            }
 
+        }
     }
 }
