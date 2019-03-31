@@ -147,7 +147,7 @@ class AccountListActivity : AppCompatActivity() {
                 accounts.add(newAccount)
                 uiThread {
                     Toast.makeText(context, "Added $name", Toast.LENGTH_SHORT).show()
-                    accountList.adapter?.notifyDataSetChanged()
+                    accountList.adapter?.notifyDataSetChanged() //todo just notify there was one added
                 }
             } else {
                 uiThread {
