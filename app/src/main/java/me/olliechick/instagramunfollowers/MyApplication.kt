@@ -12,6 +12,7 @@ class MyApplication : Application() {
     companion object {
         var instagram: Instagram4Android? = null
         val prefsFile = "me.olliechick.instagramunfollowers.prefs"
+        val helpUrl = "https://docs.google.com/document/d/1-LhlALXtHtUy6Em9Hb6cTdF0Hbwm4q4N6iKVuOJ0kIE/edit?usp=sharing"
 
         fun login(prefs: SharedPreferences, username: String, password: String): Boolean {
 

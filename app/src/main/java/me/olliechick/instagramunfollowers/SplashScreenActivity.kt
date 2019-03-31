@@ -44,7 +44,9 @@ class SplashScreenActivity : Activity() {
                 uiThread {
                     if (loginSuccess) {
                         val intent = Intent(context, AccountListActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
+                        finish()
                     } else {
                         toast("Your username and password for $username no longer work :(")
                         goToLoginPage()
@@ -57,6 +59,8 @@ class SplashScreenActivity : Activity() {
 
     private fun goToLoginPage() {
         val intent = Intent(this, LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+        finish()
     }
 }

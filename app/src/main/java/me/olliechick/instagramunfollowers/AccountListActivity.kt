@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_account_list.*
 import me.olliechick.instagramunfollowers.MyApplication.Companion.getAccount
+import me.olliechick.instagramunfollowers.MyApplication.Companion.helpUrl
 import me.olliechick.instagramunfollowers.MyApplication.Companion.logout
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -44,16 +45,13 @@ class AccountListActivity : AppCompatActivity() {
         set(value) {
             field = value
             accountList.adapter = AccountAdapter(this, field) {
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.instagram.com/${it.username}/")
-                ) //todo change to open unfollower list
-                startActivity((intent))
+                val intent = Intent(this, UnfollowersListActivity::class.java)
+                intent.putExtra("username", it.username)
+                startActivity(intent)
             }
         }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-
         val inflater = menuInflater
         inflater.inflate(R.menu.mainmenu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -67,6 +65,14 @@ class AccountListActivity : AppCompatActivity() {
             true
         }
 
+        R.id.action_help -> {
+            val uri = Uri.parse(helpUrl)
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            startActivity(intent)
+            true
+        }
+
+
         R.id.action_log_out -> {
             val prefs = getSharedPreferences(MyApplication.prefsFile, Context.MODE_PRIVATE)
             logout(prefs)
@@ -75,14 +81,12 @@ class AccountListActivity : AppCompatActivity() {
             startActivity(intent)
             true
         }
-
         else -> {
             super.onOptionsItemSelected(item)
         }
     }
 
     private fun getAccountDao(): AccountDao {
-
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "db"
@@ -132,20 +136,25 @@ class AccountListActivity : AppCompatActivity() {
         val dao = getAccountDao()
         doAsync {
             val result = getAccount(username)
-            uiThread {
-                Toast.makeText(context, result.status, Toast.LENGTH_SHORT).show()
-            }
-            val user = result.user
-            val name = user.full_name
-            val id = user.pk.toInt()
-            val newAccount = Account(id, username, name)
-            dao.insertAll(
-                newAccount
-            )
-            accounts.add(newAccount)
-            uiThread {
-                Toast.makeText(context, "Added $name", Toast.LENGTH_SHORT).show()
-                accountList.adapter?.notifyDataSetChanged()
+            if (result.status.toLowerCase() == "ok") {
+                val user = result.user
+                val name = user.full_name
+                val id = user.pk.toInt()
+                val newAccount = Account(id, username, name)
+                dao.insertAll(
+                    newAccount
+                )
+                accounts.add(newAccount)
+                uiThread {
+                    Toast.makeText(context, "Added $name", Toast.LENGTH_SHORT).show()
+                    accountList.adapter?.notifyDataSetChanged()
+                }
+            } else {
+                uiThread {
+                    Toast.makeText(context, getString(R.string.error_getting_account, username), Toast.LENGTH_SHORT)
+                        .show()
+                }
+
             }
 
         }

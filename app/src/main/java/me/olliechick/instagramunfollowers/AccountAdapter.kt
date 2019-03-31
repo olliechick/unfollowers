@@ -34,8 +34,14 @@ class AccountAdapter(
     }
 
     override fun onBindViewHolder(holder: AccountViewHolder, i: Int) {
-        holder.accountName.text = accounts[i].name
-        holder.itemView.setBackgroundColor(if (selectedIndex == i) Color.LTGRAY else Color.TRANSPARENT)
+        val name = accounts[i].name
+        val username = accounts[i].username
+
+        var displayText  = ""
+        if (name.replace("\\s".toRegex(), "") == "") displayText = username
+        else displayText = "$name ($username)"
+
+        holder.accountName.text = displayText
     }
 }
 

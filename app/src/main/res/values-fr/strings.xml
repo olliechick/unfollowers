@@ -9,4 +9,6 @@
     <string name="error_empty_field">Ce champ est requis</string>
     <string name="action_settings">Configuration</string>
     <string name="action_log_out">Déconnexion</string>
+    <string name="error_getting_account">Desolee, mais %1$s pas existe.</string>
+    <string name="action_help">Aidez</string>
 </resources>
