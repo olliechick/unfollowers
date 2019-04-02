@@ -1,59 +1,53 @@
 package me.olliechick.instagramunfollowers
 
 import android.arch.persistence.room.*
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.TypeConverters
+import android.arch.persistence.room.Database
 
-@Entity
+
+
+@Entity(tableName = "Account")
 data class Account(
     @PrimaryKey var id: Int,
-    @ColumnInfo(name = "username") var username: String,
-    @ColumnInfo(name = "name") var name: String
+    var username: String,
+    var name: String,
+    var created: OffsetDateTime
 )
 
 @Dao
 interface AccountDao {
-
     @Query("SELECT * FROM account")
     fun getAll(): List<Account>
 
     @Insert
     fun insertAll(vararg users: Account)
-
-//    fun get_url(username: String): String {
-//        return "https://www.instagram.com/$username/"
-//    }
 }
 
 @Database(entities = arrayOf(Account::class), version = 1)
+@TypeConverters(TiviTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
 }
-/*
 
-@Entity
-data class UserAccount(
-    @PrimaryKey var uid: Int,
-    @ColumnInfo(name = "first_name") var firstName: String?,
-    @ColumnInfo(name = "last_name") var lastName: String?
-)
+object TiviTypeConverters {
+    private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
+    @TypeConverter
+    @JvmStatic
+    fun toOffsetDateTime(value: String?): OffsetDateTime? {
+        return value?.let {
+            return formatter.parse(value, OffsetDateTime::from)
+        }
+    }
 
-@Dao
-interface UserAccountDao {
-    @Query("SELECT * FROM userAccount")
-    fun getAll(): List<UserAccount>
+    @TypeConverter
+    @JvmStatic
+    fun fromOffsetDateTime(date: OffsetDateTime?): String? {
+        return date?.format(formatter)
+    }
+}
 
-    @Query("SELECT * FROM userAccount WHERE uid IN (:userIds)")
-    fun loadAllByIds(userIds: IntArray): List<UserAccount>
-
-    @Query(
-        "SELECT * FROM user WHERE first_name LIKE :first AND " +
-                "last_name LIKE :last LIMIT 1"
-    )
-    fun findByName(first: String, last: String): UserAccount
-
-    @Insert
-    fun insertAll(vararg users: UserAccount)
-
-    @Delete
-    fun delete(user: UserAccount)
-}*/
+//

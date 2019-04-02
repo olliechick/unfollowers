@@ -22,6 +22,7 @@ import me.olliechick.instagramunfollowers.MyApplication.Companion.logout
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import java.time.OffsetDateTime
 
 
 class AccountListActivity : AppCompatActivity() {
@@ -34,7 +35,6 @@ class AccountListActivity : AppCompatActivity() {
 
         val actionBar = supportActionBar
         actionBar?.title = "Accounts"
-
 
         fab.setOnClickListener { openAddAccountDialog() }
 
@@ -140,7 +140,8 @@ class AccountListActivity : AppCompatActivity() {
                 val user = result.user
                 val name = user.full_name
                 val id = user.pk.toInt()
-                val newAccount = Account(id, username, name)
+                val created = OffsetDateTime.now()
+                val newAccount = Account(id, username, name, created)
                 dao.insertAll(
                     newAccount
                 )
