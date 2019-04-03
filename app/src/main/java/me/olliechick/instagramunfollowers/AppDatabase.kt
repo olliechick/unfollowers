@@ -15,6 +15,16 @@ data class Account(
     var created: OffsetDateTime
 )
 
+@Entity(tableName = "followers", primaryKeys = ["id", "timestamp"],
+    foreignKeys = [ForeignKey(entity=Account::class, parentColumns = ["id"], childColumns = ["following_id"])])
+data class Follower(
+    var id: Int,
+    var timestamp: OffsetDateTime,
+    var username: String,
+    var name: String,
+    @ColumnInfo(name = "following_id") var followingId: Int
+)
+
 @Dao
 interface AccountDao {
     @Query("SELECT * FROM accounts ORDER BY created")
@@ -24,10 +34,20 @@ interface AccountDao {
     fun insertAll(vararg users: Account)
 }
 
+@Dao
+interface FollowerDao {
+    @Query("SELECT * FROM followers WHERE following_id = :followingId")
+    fun getAllFollowersOfAUser(followingId: Int): List<Follower>
+
+    @Query("SELECT * FROM followers JOIN accounts on followers.following_id = accounts.id WHERE followers.username = :followingUsername")
+    fun getAllFollowersOfAUser(followingUsername: String): List<Follower>
+}
+
 @Database(entities = [Account::class], version = 1)
 @TypeConverters(TiviTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
+    abstract fun followerDao(): FollowerDao
 }
 
 object TiviTypeConverters {

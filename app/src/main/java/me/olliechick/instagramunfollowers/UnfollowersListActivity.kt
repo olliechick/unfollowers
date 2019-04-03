@@ -9,29 +9,31 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_account_list.*
+import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 
 class UnfollowersListActivity : AppCompatActivity() {
     private lateinit var unfollowerList: RecyclerView
     private lateinit var db: AppDatabase
+    private lateinit var following_username: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_unfollowers_list)
 
-        val username = intent.getStringExtra("username")
+        following_username = intent.getStringExtra("username")
 
         val actionBar = supportActionBar
-        actionBar?.title = "${getString(R.string.app_name)}: $username"
+        actionBar?.title = "${getString(R.string.app_name)}: $following_username"
 
         fab.setOnClickListener { refresh() }
 
         populateList()
     }
 
-    var unfollowers: ArrayList<Account> = arrayListOf()
-        set(value) {
+    var unfollowers: ArrayList<Follower> = arrayListOf()
+        /*set(value) {
             field = value
             accountList.adapter = AccountAdapter(this, field) {
                 val intent = Intent(
@@ -40,14 +42,14 @@ class UnfollowersListActivity : AppCompatActivity() {
                 )
                 startActivity(intent)
             }
-        }
+        }*/
 
-    private fun getUnfollowerDao(): AccountDao{
+    private fun getFollowerDao(): FollowerDao {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "db"
         ).build()
-        return db.accountDao()
+        return db.followerDao()
     }
 
     private fun populateList() {
@@ -56,7 +58,7 @@ class UnfollowersListActivity : AppCompatActivity() {
         accountList.layoutManager = layoutManager
 
         doAsync {
-            unfollowers = ArrayList(getUnfollowerDao().getAll())
+            unfollowers = ArrayList(getFollowerDao().getAllFollowersOfAUser(following_username))
         }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
