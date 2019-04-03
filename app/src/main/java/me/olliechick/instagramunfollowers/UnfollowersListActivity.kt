@@ -8,13 +8,11 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_account_list.*
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_unfollowers_list.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 
 class UnfollowersListActivity : AppCompatActivity() {
-    private lateinit var unfollowerList: RecyclerView
     private lateinit var db: AppDatabase
     private lateinit var following_username: String
 
@@ -33,16 +31,16 @@ class UnfollowersListActivity : AppCompatActivity() {
     }
 
     var unfollowers: ArrayList<Follower> = arrayListOf()
-        /*set(value) {
+        set(value) {
             field = value
-            accountList.adapter = AccountAdapter(this, field) {
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.instagram.com/${it.username}/")
-                )
-                startActivity(intent)
-            }
-        }*/
+//            accountList.adapter = FollowerAdapter(this, field) {
+//                val intent = Intent(
+//                    Intent.ACTION_VIEW,
+//                    Uri.parse("https://www.instagram.com/${it.username}/")
+//                )
+//                startActivity(intent)
+//            }
+        }
 
     private fun getFollowerDao(): FollowerDao {
         db = Room.databaseBuilder(
@@ -53,16 +51,15 @@ class UnfollowersListActivity : AppCompatActivity() {
     }
 
     private fun populateList() {
-        unfollowerList = findViewById(R.id.accountList)
         val layoutManager = LinearLayoutManager(this)
-        accountList.layoutManager = layoutManager
+        unfollowerList.layoutManager = layoutManager
 
         doAsync {
             unfollowers = ArrayList(getFollowerDao().getAllFollowersOfAUser(following_username))
         }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
-        accountList.addItemDecoration(decoration)
+        unfollowerList.addItemDecoration(decoration)
     }
 
     private fun refresh() {

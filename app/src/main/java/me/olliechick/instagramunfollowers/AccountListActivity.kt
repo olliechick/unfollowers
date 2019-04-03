@@ -26,7 +26,6 @@ import java.time.OffsetDateTime
 
 
 class AccountListActivity : AppCompatActivity() {
-    private lateinit var accountList: RecyclerView
     private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +94,6 @@ class AccountListActivity : AppCompatActivity() {
     }
 
     private fun populateList() {
-        accountList = findViewById(R.id.accountList)
         val layoutManager = LinearLayoutManager(this)
         accountList.layoutManager = layoutManager
 
