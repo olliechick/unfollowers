@@ -119,7 +119,7 @@ class AccountListActivity : AppCompatActivity() {
         // Set up the buttons
         builder.setPositiveButton(
             "Add"
-        ) { _, _ -> addAccount(input.text.toString()) }
+        ) { _, _ -> addAccount(input.text.toString().toLowerCase()) }
 
         builder.setNegativeButton(
             "Cancel"
