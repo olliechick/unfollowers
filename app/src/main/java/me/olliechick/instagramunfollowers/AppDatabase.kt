@@ -43,7 +43,7 @@ interface FollowerDao {
     fun getAllFollowersOfAUser(followingUsername: String): List<Follower>
 }
 
-@Database(entities = [Account::class], version = 1)
+@Database(entities = [Account::class, Follower::class], version = 1)
 @TypeConverters(TiviTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
