@@ -7,9 +7,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.Database
 
-
-
-@Entity(tableName = "Account")
+@Entity(tableName = "accounts")
 data class Account(
     @PrimaryKey var id: Int,
     var username: String,
@@ -19,14 +17,14 @@ data class Account(
 
 @Dao
 interface AccountDao {
-    @Query("SELECT * FROM account ORDER BY created")
+    @Query("SELECT * FROM accounts ORDER BY created")
     fun getAll(): List<Account>
 
     @Insert
     fun insertAll(vararg users: Account)
 }
 
-@Database(entities = arrayOf(Account::class), version = 1)
+@Database(entities = [Account::class], version = 1)
 @TypeConverters(TiviTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
