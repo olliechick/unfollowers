@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import java.time.format.DateTimeFormatter
 
 class AccountAdapter(
     private val context: Context,
@@ -41,7 +42,7 @@ class AccountAdapter(
         var displayText  = ""
         if (name.replace("\\s".toRegex(), "") == "") displayText = username
         else displayText = "$name ($username)"
-        displayText += "$created"
+        displayText += " (${created.format(DateTimeFormatter.ofPattern("d MMM"))})"
 
         holder.accountName.text = displayText
     }

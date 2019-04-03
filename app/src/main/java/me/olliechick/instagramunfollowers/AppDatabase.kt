@@ -19,7 +19,7 @@ data class Account(
 
 @Dao
 interface AccountDao {
-    @Query("SELECT * FROM account")
+    @Query("SELECT * FROM account ORDER BY created")
     fun getAll(): List<Account>
 
     @Insert
