@@ -9,7 +9,7 @@
         tools:context=".UnfollowersListActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/accountList"
+        android:id="@+id/unfollowerList"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
