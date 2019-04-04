@@ -1,15 +1,15 @@
 package me.olliechick.instagramunfollowers
 
 import android.app.Activity
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_unfollowers_list.*
 import org.jetbrains.anko.doAsync
@@ -75,7 +75,6 @@ class UnfollowersListActivity : AppCompatActivity() {
     }
 
     private val receiver = object : BroadcastReceiver() {
-
         override fun onReceive(context: Context, intent: Intent) {
             val bundle = intent.extras
             if (bundle != null) {

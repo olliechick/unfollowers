@@ -1,11 +1,11 @@
 package me.olliechick.instagramunfollowers
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
-import android.arch.persistence.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import androidx.room.Database
 
 @Entity(tableName = "accounts")
 data class Account(
