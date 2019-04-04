@@ -12,22 +12,23 @@ data class Account(
     var created: OffsetDateTime
 )
 
-@Entity(tableName = "followers", primaryKeys = ["id", "timestamp"],
-    foreignKeys = [ForeignKey(entity=Account::class, parentColumns = ["id"], childColumns = ["following_id"])])
+@Entity(tableName = "followers", primaryKeys = ["id", "timestamp"]/*,
+    foreignKeys = [ForeignKey(entity=Account::class, parentColumns = ["id"], childColumns = ["following_id"])]*/)
 data class Follower(
     var id: Long,
     var timestamp: OffsetDateTime,
     var username: String,
     var name: String,
-    @ColumnInfo(name = "following_id") var followingId: Long
+    @ColumnInfo(name = "following_id", index = true) var followingId: Long
 )
 
+@Dao
 interface AccountDao {
     @Query("SELECT * FROM accounts ORDER BY created")
     fun getAll(): List<Account>
 
     @Query("SELECT * FROM accounts WHERE id = :id")
-    fun getUserFromId(id: Long)
+    fun getUserFromId(id: Long): List<Account>
 
     @Insert
     fun insertAll(vararg users: Account)
@@ -35,6 +36,10 @@ interface AccountDao {
 
 @Dao
 interface FollowerDao {
+    @Query("SELECT * FROM followers")
+    fun getAll(): List<Follower>
+
+
     @Query("SELECT * FROM followers WHERE following_id = :followingId")
     fun getAllFollowersOfAUser(followingId: Long): List<Follower>
 
@@ -45,7 +50,7 @@ interface FollowerDao {
     fun insertAll(vararg followers: Follower)
 }
 
-@Database(entities = [Account::class, Follower::class], version = 1)
+@Database(entities = [Account::class, Follower::class], version = 1, exportSchema = false)
 @TypeConverters(TiviTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao

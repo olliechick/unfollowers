@@ -86,20 +86,21 @@ class AccountListActivity : AppCompatActivity() {
         }
     }
 
-    private fun getAccountDao(): AccountDao {
+    private fun initialiseDb() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "db"
         ).build()
-        return db.accountDao()
     }
 
     private fun populateList() {
         val layoutManager = LinearLayoutManager(this)
         accountList.layoutManager = layoutManager
+        accounts = arrayListOf()
 
         doAsync {
-            accounts = ArrayList(getAccountDao().getAll())
+            initialiseDb()
+            accounts = ArrayList(db.accountDao().getAll())
         }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
@@ -132,7 +133,7 @@ class AccountListActivity : AppCompatActivity() {
     private fun addAccount(username: String) {
         toast("Adding $username...")
         val context = this
-        val dao = getAccountDao()
+        initialiseDb()
         doAsync {
             val result = getAccount(username)
             if (result.status.toLowerCase() == "ok") {
@@ -141,7 +142,7 @@ class AccountListActivity : AppCompatActivity() {
                 val id = user.pk
                 val created = OffsetDateTime.now()
                 val newAccount = Account(id, username, name, created)
-                dao.insertAll(
+                db.accountDao().insertAll(
                     newAccount
                 )
                 accounts.add(newAccount)

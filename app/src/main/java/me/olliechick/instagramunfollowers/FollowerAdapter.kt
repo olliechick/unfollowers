@@ -15,8 +15,6 @@ class FollowerAdapter(
     val clickListener: (Follower) -> Unit
 ) : RecyclerView.Adapter<AccountViewHolder>() {
 
-    private var selectedIndex = RecyclerView.NO_POSITION
-
     override fun getItemCount(): Int = followers.size
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): AccountViewHolder {

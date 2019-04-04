@@ -16,6 +16,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_unfollowers_list.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 
 
 class UnfollowersListActivity : AppCompatActivity() {
@@ -42,6 +43,7 @@ class UnfollowersListActivity : AppCompatActivity() {
     var unfollowers: ArrayList<Follower> = arrayListOf()
         set(value) {
             field = value
+            Log.i(Util.TAG,"updating unfollowers")
             unfollowerList.adapter = FollowerAdapter(this, field) {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
@@ -51,20 +53,24 @@ class UnfollowersListActivity : AppCompatActivity() {
             }
         }
 
-    private fun getFollowerDao(): FollowerDao {
+    private fun initialiseDb() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "db"
         ).build()
-        return db.followerDao()
     }
 
     private fun populateList() {
         val layoutManager = LinearLayoutManager(this)
         unfollowerList.layoutManager = layoutManager
+        unfollowers = arrayListOf()
 
         doAsync {
-            unfollowers = ArrayList(getFollowerDao().getAllFollowersOfAUser(followingUsername))
+            initialiseDb()
+            val unf = ArrayList(db.followerDao().getAll())
+            uiThread {
+                unfollowers = unf
+            }
         }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
@@ -72,7 +78,6 @@ class UnfollowersListActivity : AppCompatActivity() {
     }
 
     private fun refresh() {
-
         val intent = Intent(this, GetFollowersService::class.java)
         intent.putExtra("username", followingUsername)
         intent.putExtra("id", followingId)
