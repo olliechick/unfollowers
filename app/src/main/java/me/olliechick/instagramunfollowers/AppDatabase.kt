@@ -41,6 +41,9 @@ interface FollowerDao {
 
     @Query("SELECT * FROM followers JOIN accounts on followers.following_id = accounts.id WHERE followers.username = :followingUsername")
     fun getAllFollowersOfAUser(followingUsername: String): List<Follower>
+
+    @Insert
+    fun insertAll(vararg followers: Follower)
 }
 
 @Database(entities = [Account::class, Follower::class], version = 1)
@@ -67,5 +70,3 @@ object TiviTypeConverters {
         return date?.format(formatter)
     }
 }
-
-//
