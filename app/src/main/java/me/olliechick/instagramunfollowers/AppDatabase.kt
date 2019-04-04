@@ -50,10 +50,10 @@ interface FollowerDao {
 
     @Query("""SELECT id, timestamp, username, name, following_id
                     FROM (SELECT * FROM followers
-                          WHERE following_id = 1) AS t1
+                          WHERE following_id = :followingId) AS t1
                     LEFT JOIN (SELECT id as current_id FROM followers
-                               WHERE following_id = 1
-                               AND timestamp = (SELECT MAX(timestamp) FROM followers WHERE following_id = 1)) AS t2
+                               WHERE following_id = :followingId
+                               AND timestamp = (SELECT MAX(timestamp) FROM followers WHERE following_id = :followingId)) AS t2
                     ON (id = current_id)
                     WHERE current_id IS NULL""")
     fun getUnfollowersOfAUser(followingId: Long): List<Follower>
