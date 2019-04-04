@@ -1,16 +1,20 @@
 package me.olliechick.instagramunfollowers
 
+import android.app.Activity
 import android.arch.persistence.room.Room
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_unfollowers_list.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+
 
 class UnfollowersListActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
@@ -63,6 +67,45 @@ class UnfollowersListActivity : AppCompatActivity() {
     }
 
     private fun refresh() {
-        toast("Refreshing not yet implemented.")
+
+        val intent = Intent(this, GetFollowersService::class.java)
+        intent.putExtra("username", following_username)
+        startService(intent)
+        toast("Refreshing...")
+    }
+
+    private val receiver = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent) {
+            val bundle = intent.extras
+            if (bundle != null) {
+                if (resultCode == Activity.RESULT_OK) {
+                    Toast.makeText(
+                        context,
+                        bundle.getString("data"),
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        context, "Download failed",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(
+            receiver, IntentFilter(
+                GetFollowersService.NOTIFICATION
+            )
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(receiver)
     }
 }
