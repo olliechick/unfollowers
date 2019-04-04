@@ -67,7 +67,7 @@ class UnfollowersListActivity : AppCompatActivity() {
 
         doAsync {
             initialiseDb()
-            val unf = ArrayList(db.followerDao().getAll())
+            val unf = ArrayList(db.followerDao().getUnfollowersOfAUser(followingId))
             db.close()
             uiThread {
                 unfollowers = unf

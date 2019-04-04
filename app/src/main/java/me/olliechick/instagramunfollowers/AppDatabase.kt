@@ -42,12 +42,21 @@ interface FollowerDao {
     @Query("SELECT * FROM followers")
     fun getAll(): List<Follower>
 
-
     @Query("SELECT * FROM followers WHERE following_id = :followingId")
     fun getAllFollowersOfAUser(followingId: Long): List<Follower>
 
     @Query("SELECT * FROM followers JOIN accounts on followers.following_id = accounts.id WHERE followers.username = :followingUsername")
     fun getAllFollowersOfAUser(followingUsername: String): List<Follower>
+
+    @Query("""SELECT *
+                    FROM (SELECT * FROM followers
+                          WHERE following_id = :followingId)
+                    LEFT JOIN (SELECT following_id as current_following_id FROM followers
+                               WHERE following_id = :followingId
+                               AND timestamp = (SELECT MAX(timestamp) FROM followers WHERE following_id = :followingId))
+                    ON (following_id = current_following_id)
+                    WHERE current_following_id IS NULL """)
+    fun getUnfollowersOfAUser(followingId: Long): List<Follower>
 
     @Insert
     fun insertAll(vararg followers: Follower)
