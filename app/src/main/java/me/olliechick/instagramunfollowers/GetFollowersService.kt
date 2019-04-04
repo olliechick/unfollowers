@@ -20,7 +20,7 @@ class GetFollowersService : IntentService("DownloadService") {
 
     // will be called asynchronously by Android
     override fun onHandleIntent(intent: Intent?) {
-        val followingId = intent!!.getLongExtra("id", 0)
+        followingId = intent!!.getLongExtra("id", 0)
         if (followingId.toInt() == 0) Log.e(Util.TAG, "Id = 0 in GetFollowersService")
         val followerSummaries = getFollowers(followingId)
         val followers = instagramUserSummaryListToFollowerList(followerSummaries)
@@ -63,7 +63,6 @@ class GetFollowersService : IntentService("DownloadService") {
     private fun saveFollowers(followers: List<Follower>) {
         initialiseDb()
         val ids = db.accountDao().getIds()
-        Log.i(Util.TAG, "Id from follower 0: ${followers[0].id} (type = ${followers[0].id.javaClass.kotlin})")
         ids.forEach {
             Log.i(Util.TAG, "$it (type = ${it.javaClass.kotlin})")
         }

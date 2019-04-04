@@ -12,8 +12,8 @@ data class Account(
     var created: OffsetDateTime
 )
 
-@Entity(tableName = "followers", primaryKeys = ["id", "timestamp"]/*,
-    foreignKeys = [ForeignKey(entity=Account::class, parentColumns = ["id"], childColumns = ["following_id"])]*/)
+@Entity(tableName = "followers", primaryKeys = ["id", "timestamp"],
+    foreignKeys = [ForeignKey(entity=Account::class, parentColumns = ["id"], childColumns = ["following_id"])])
 data class Follower(
     var id: Long,
     var timestamp: OffsetDateTime,
