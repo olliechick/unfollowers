@@ -101,6 +101,7 @@ class AccountListActivity : AppCompatActivity() {
         doAsync {
             initialiseDb()
             accounts = ArrayList(db.accountDao().getAll())
+            db.close()
         }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
@@ -133,7 +134,6 @@ class AccountListActivity : AppCompatActivity() {
     private fun addAccount(username: String) {
         toast("Adding $username...")
         val context = this
-        initialiseDb()
         doAsync {
             val result = getAccount(username)
             if (result.status.toLowerCase() == "ok") {
@@ -142,9 +142,11 @@ class AccountListActivity : AppCompatActivity() {
                 val id = user.pk
                 val created = OffsetDateTime.now()
                 val newAccount = Account(id, username, name, created)
-                db.accountDao().insertAll(
-                    newAccount
-                )
+
+                initialiseDb()
+                db.accountDao().insertAll(newAccount)
+                db.close()
+
                 accounts.add(newAccount)
                 uiThread {
                     Toast.makeText(context, "Added $name", Toast.LENGTH_SHORT).show()

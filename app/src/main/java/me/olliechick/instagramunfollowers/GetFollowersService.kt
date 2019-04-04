@@ -30,10 +30,13 @@ class GetFollowersService : IntentService("DownloadService") {
             saved = true
         } catch (e: SQLiteConstraintException) {
             saved = false
+            Log.e(Util.TAG, e.message)
+
         }
         initialiseDb()
         publishResults("$saved fid: $followingId " +
-                "\ndb.accountDao().getAll(): ${db.accountDao().getUserFromId(followingId)}")
+                "\n${db.accountDao().getUserFromId(followingId)}")
+        db.close()
     }
 
     private fun instagramUserSummaryListToFollowerList(followerSummaries: List<InstagramUserSummary>): List<Follower> =
@@ -59,8 +62,8 @@ class GetFollowersService : IntentService("DownloadService") {
 
     private fun saveFollowers(followers: List<Follower>) {
         initialiseDb()
-        val dao = db.followerDao()
-        dao.insertAll(*followers.map { it }.toTypedArray())
+        db.followerDao().insertAll(*followers.map { it }.toTypedArray())
+        db.close()
     }
 
 
