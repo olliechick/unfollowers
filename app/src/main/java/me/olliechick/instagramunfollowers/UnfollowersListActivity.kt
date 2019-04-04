@@ -6,7 +6,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,16 +20,19 @@ import org.jetbrains.anko.toast
 
 class UnfollowersListActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
-    private lateinit var following_username: String
+    private lateinit var followingUsername: String
+    private var followingId: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_unfollowers_list)
 
-        following_username = intent.getStringExtra("username")
+        followingUsername = intent.getStringExtra("username")
+        followingId = intent.getLongExtra("id", 0)
+        if (followingId.toInt() == 0) Log.e(Util.TAG, "Id = 0 in UnfollowersListActivity")
 
         val actionBar = supportActionBar
-        actionBar?.title = "${getString(R.string.app_name)}: $following_username"
+        actionBar?.title = "${getString(R.string.app_name)}: $followingUsername"
 
         fab.setOnClickListener { refresh() }
 
@@ -37,13 +42,13 @@ class UnfollowersListActivity : AppCompatActivity() {
     var unfollowers: ArrayList<Follower> = arrayListOf()
         set(value) {
             field = value
-//            accountList.adapter = FollowerAdapter(this, field) {
-//                val intent = Intent(
-//                    Intent.ACTION_VIEW,
-//                    Uri.parse("https://www.instagram.com/${it.username}/")
-//                )
-//                startActivity(intent)
-//            }
+            unfollowerList.adapter = FollowerAdapter(this, field) {
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://www.instagram.com/${it.username}/")
+                )
+                startActivity(intent)
+            }
         }
 
     private fun getFollowerDao(): FollowerDao {
@@ -59,7 +64,7 @@ class UnfollowersListActivity : AppCompatActivity() {
         unfollowerList.layoutManager = layoutManager
 
         doAsync {
-            unfollowers = ArrayList(getFollowerDao().getAllFollowersOfAUser(following_username))
+            unfollowers = ArrayList(getFollowerDao().getAllFollowersOfAUser(followingUsername))
         }
 
         val decoration = DividerItemDecoration(this, layoutManager.orientation)
@@ -69,7 +74,8 @@ class UnfollowersListActivity : AppCompatActivity() {
     private fun refresh() {
 
         val intent = Intent(this, GetFollowersService::class.java)
-        intent.putExtra("username", following_username)
+        intent.putExtra("username", followingUsername)
+        intent.putExtra("id", followingId)
         startService(intent)
         toast("Refreshing...")
     }

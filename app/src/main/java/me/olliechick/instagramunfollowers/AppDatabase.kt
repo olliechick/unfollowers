@@ -3,13 +3,10 @@ package me.olliechick.instagramunfollowers
 import androidx.room.*
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import androidx.room.Database
 
 @Entity(tableName = "accounts")
 data class Account(
-    @PrimaryKey var id: Int,
+    @PrimaryKey var id: Long,
     var username: String,
     var name: String,
     var created: OffsetDateTime
@@ -18,17 +15,19 @@ data class Account(
 @Entity(tableName = "followers", primaryKeys = ["id", "timestamp"],
     foreignKeys = [ForeignKey(entity=Account::class, parentColumns = ["id"], childColumns = ["following_id"])])
 data class Follower(
-    var id: Int,
+    var id: Long,
     var timestamp: OffsetDateTime,
     var username: String,
     var name: String,
-    @ColumnInfo(name = "following_id") var followingId: Int
+    @ColumnInfo(name = "following_id") var followingId: Long
 )
 
-@Dao
 interface AccountDao {
     @Query("SELECT * FROM accounts ORDER BY created")
     fun getAll(): List<Account>
+
+    @Query("SELECT * FROM accounts WHERE id = :id")
+    fun getUserFromId(id: Long)
 
     @Insert
     fun insertAll(vararg users: Account)
@@ -37,7 +36,7 @@ interface AccountDao {
 @Dao
 interface FollowerDao {
     @Query("SELECT * FROM followers WHERE following_id = :followingId")
-    fun getAllFollowersOfAUser(followingId: Int): List<Follower>
+    fun getAllFollowersOfAUser(followingId: Long): List<Follower>
 
     @Query("SELECT * FROM followers JOIN accounts on followers.following_id = accounts.id WHERE followers.username = :followingUsername")
     fun getAllFollowersOfAUser(followingUsername: String): List<Follower>

@@ -46,6 +46,7 @@ class AccountListActivity : AppCompatActivity() {
             accountList.adapter = AccountAdapter(this, field) {
                 val intent = Intent(this, UnfollowersListActivity::class.java)
                 intent.putExtra("username", it.username)
+                intent.putExtra("id", it.id)
                 startActivity(intent)
             }
         }
@@ -137,7 +138,7 @@ class AccountListActivity : AppCompatActivity() {
             if (result.status.toLowerCase() == "ok") {
                 val user = result.user
                 val name = user.full_name
-                val id = user.pk.toInt()
+                val id = user.pk
                 val created = OffsetDateTime.now()
                 val newAccount = Account(id, username, name, created)
                 dao.insertAll(
