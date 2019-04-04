@@ -16,9 +16,9 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_account_list.*
-import me.olliechick.instagramunfollowers.MyApplication.Companion.getAccount
-import me.olliechick.instagramunfollowers.MyApplication.Companion.helpUrl
-import me.olliechick.instagramunfollowers.MyApplication.Companion.logout
+import me.olliechick.instagramunfollowers.Util.Companion.getAccount
+import me.olliechick.instagramunfollowers.Util.Companion.helpUrl
+import me.olliechick.instagramunfollowers.Util.Companion.logout
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -73,7 +73,7 @@ class AccountListActivity : AppCompatActivity() {
 
 
         R.id.action_log_out -> {
-            val prefs = getSharedPreferences(MyApplication.prefsFile, Context.MODE_PRIVATE)
+            val prefs = getSharedPreferences(Util.prefsFile, Context.MODE_PRIVATE)
             logout(prefs)
 
             val intent = Intent(this, LoginActivity::class.java)

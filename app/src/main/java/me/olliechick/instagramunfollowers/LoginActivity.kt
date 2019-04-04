@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import me.olliechick.instagramunfollowers.MyApplication.Companion.login as login_backend
+import me.olliechick.instagramunfollowers.Util.Companion.login as login_backend
 
 
 /**
@@ -30,7 +30,7 @@ class LoginActivity : Activity() {
     private fun login() {
         val username_text = username.text.toString()
         val password_text = password.text.toString()
-        val prefs = getSharedPreferences(MyApplication.prefsFile, Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(Util.prefsFile, Context.MODE_PRIVATE)
         if (username_text.isEmpty()) emptyFieldError(username)
         else if (password_text.isEmpty()) emptyFieldError(password)
         else {

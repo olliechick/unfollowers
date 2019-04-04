@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import me.olliechick.instagramunfollowers.MyApplication.Companion.loginFromSharedPrefs
-import me.olliechick.instagramunfollowers.MyApplication.Companion.prefsFile
+import me.olliechick.instagramunfollowers.Util.Companion.loginFromSharedPrefs
+import me.olliechick.instagramunfollowers.Util.Companion.prefsFile
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
