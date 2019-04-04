@@ -63,9 +63,9 @@ class GetFollowersService : IntentService("DownloadService") {
     private fun saveFollowers(followers: List<Follower>) {
         initialiseDb()
         val ids = db.accountDao().getIds()
-        Log.i(Util.TAG, "Id from follower 0: ${followers[0].id}")
+        Log.i(Util.TAG, "Id from follower 0: ${followers[0].id} (type = ${followers[0].id.javaClass.kotlin})")
         ids.forEach {
-            Log.i(Util.TAG, "$it")
+            Log.i(Util.TAG, "$it (type = ${it.javaClass.kotlin})")
         }
         db.followerDao().insertAll(*followers.map { it }.toTypedArray())
         db.close()
