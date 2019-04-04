@@ -1,18 +1,18 @@
 package me.olliechick.instagramunfollowers
 
-import android.app.Application
 import android.content.SharedPreferences
 import dev.niekirk.com.instagram4android.Instagram4Android
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult
 import org.jetbrains.anko.doAsync
 
-class MyApplication : Application() {
+class Util {
 
     companion object {
         var instagram: Instagram4Android? = null
         val prefsFile = "me.olliechick.instagramunfollowers.prefs"
         val helpUrl = "https://docs.google.com/document/d/1-LhlALXtHtUy6Em9Hb6cTdF0Hbwm4q4N6iKVuOJ0kIE/edit?usp=sharing"
+        val TAG = "Unfollowers"
 
         fun login(prefs: SharedPreferences, username: String, password: String): Boolean {
 
@@ -67,7 +67,7 @@ class MyApplication : Application() {
 
 
         fun getAccount(username: String): InstagramSearchUsernameResult {
-            val result = MyApplication.instagram!!.sendRequest(InstagramSearchUsernameRequest(username))
+            val result = instagram!!.sendRequest(InstagramSearchUsernameRequest(username))
             return result
         }
     }
