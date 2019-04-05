@@ -68,6 +68,25 @@ class UnfollowersListActivity : AppCompatActivity() {
         doAsync {
             initialiseDb()
             val unf = ArrayList(db.followerDao().getUnfollowersOfAUser(followingId))
+            Log.i(Util.TAG, "Count: ${unf.size}")
+            unf.forEach {
+                Log.i(Util.TAG, it.username)
+            }
+
+            val maxtime = db.followerDao().getMaxTimestamp(followingId)
+            Log.i(Util.TAG, "Max time: $maxtime")
+
+            val currentIds = db.followerDao().getCurrentIds(followingId)
+            Log.i(Util.TAG, "current ids: $currentIds")
+
+            var x = db.followerDao().getX(followingId)
+            Log.i(Util.TAG, "X: $x")
+
+            var y = db.followerDao().getY(followingId)
+            Log.i(Util.TAG, "Y: $y")
+
+
+
             db.close()
             uiThread {
                 unfollowers = unf

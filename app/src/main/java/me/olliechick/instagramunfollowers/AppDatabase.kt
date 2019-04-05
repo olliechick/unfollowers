@@ -55,8 +55,37 @@ interface FollowerDao {
                                WHERE following_id = :followingId
                                AND timestamp = (SELECT MAX(timestamp) FROM followers WHERE following_id = :followingId)) AS t2
                     ON (id = current_id)
-                    WHERE current_id IS NULL""")
+                    WHERE current_id IS NULL
+                    GROUP BY id""")
     fun getUnfollowersOfAUser(followingId: Long): List<Follower>
+
+    @Query("SELECT MAX(timestamp) FROM followers WHERE following_id = :followingId")
+    fun getMaxTimestamp(followingId: Long): OffsetDateTime
+
+    @Query("SELECT id as current_id FROM followers\n" +
+            "                               WHERE following_id = :followingId\n" +
+            "                               AND timestamp = (SELECT MAX(timestamp) FROM followers WHERE following_id = :followingId)")
+    fun getCurrentIds(followingId: Long): List<Long>
+
+    @Query("""SELECT username
+                    FROM (SELECT * FROM followers
+                          WHERE following_id = :followingId) AS t1
+                    LEFT JOIN (SELECT id as current_id FROM followers
+                               WHERE following_id = :followingId
+                               AND timestamp = (SELECT MAX(timestamp) FROM followers WHERE following_id = :followingId)) AS t2
+                    ON (id = current_id)
+                    WHERE current_id IS NULL""")
+    fun getX(followingId: Long): List<String>
+
+    @Query("""SELECT current_id
+                    FROM (SELECT * FROM followers
+                          WHERE following_id = :followingId) AS t1
+                    LEFT JOIN (SELECT id as current_id FROM followers
+                               WHERE following_id = :followingId
+                               AND timestamp = (SELECT MAX(timestamp) FROM followers WHERE following_id = :followingId)) AS t2
+                    ON (id = current_id)
+                    """)
+    fun getY(followingId: Long): List<Long>
 
     @Insert
     fun insertAll(vararg followers: Follower)
