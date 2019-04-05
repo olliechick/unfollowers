@@ -23,26 +23,33 @@ class GetFollowersService : IntentService("DownloadService") {
         followingId = intent!!.getLongExtra("id", 0)
         if (followingId.toInt() == 0) Log.e(Util.TAG, "Id = 0 in GetFollowersService")
         val followerSummaries = getFollowers(followingId)
-        val followers = instagramUserSummaryListToFollowerList(followerSummaries)
+        val now = OffsetDateTime.now()
+        val followers = instagramUserSummaryListToFollowerList(followerSummaries, now)
         var saved: Boolean
+
+        initialiseDb()
         try {
             saveFollowers(followers)
+            updateLastUpdated(followingId, now)
             saved = true
         } catch (e: SQLiteConstraintException) {
             saved = false
             Log.e(Util.TAG, e.message)
-
+        } finally {
+            db.close()
         }
-        initialiseDb()
-        publishResults("$saved fid: $followingId " +
-                "\n${db.accountDao().getUserFromId(followingId)}")
-        db.close()
+
+        publishResults(if (saved) "done :)" else "sql error")
     }
 
-    private fun instagramUserSummaryListToFollowerList(followerSummaries: List<InstagramUserSummary>): List<Follower> =
-        followerSummaries.map {
-            Follower(it.pk, OffsetDateTime.now(), it.username, it.full_name, followingId)
-        }
+    private fun updateLastUpdated(followingId: Long, now: OffsetDateTime) {
+        db.accountDao().updateLastUpdated(followingId, now)
+    }
+
+    private fun instagramUserSummaryListToFollowerList(
+        followerSummaries: List<InstagramUserSummary>,
+        now: OffsetDateTime
+    ): List<Follower> = followerSummaries.map { Follower(it.pk, now, it.username, it.full_name, followingId) }
 
 
     private fun getFollowers(id: Long): List<InstagramUserSummary> =
@@ -61,13 +68,11 @@ class GetFollowersService : IntentService("DownloadService") {
     }
 
     private fun saveFollowers(followers: List<Follower>) {
-        initialiseDb()
         val ids = db.accountDao().getIds()
         ids.forEach {
             Log.i(Util.TAG, "$it (type = ${it.javaClass.kotlin})")
         }
         db.followerDao().insertAll(*followers.map { it }.toTypedArray())
-        db.close()
     }
 
 

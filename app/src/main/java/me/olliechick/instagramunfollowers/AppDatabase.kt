@@ -9,11 +9,14 @@ data class Account(
     @PrimaryKey var id: Long,
     var username: String,
     var name: String,
-    var created: OffsetDateTime
+    var created: OffsetDateTime,
+    @ColumnInfo(name = "last_updated") var lastUpdated: OffsetDateTime
 )
 
-@Entity(tableName = "followers", primaryKeys = ["id", "timestamp"],
-    foreignKeys = [ForeignKey(entity=Account::class, parentColumns = ["id"], childColumns = ["following_id"])])
+@Entity(
+    tableName = "followers", primaryKeys = ["id", "timestamp"],
+    foreignKeys = [ForeignKey(entity = Account::class, parentColumns = ["id"], childColumns = ["following_id"])]
+)
 data class Follower(
     var id: Long,
     var timestamp: OffsetDateTime,
@@ -35,6 +38,12 @@ interface AccountDao {
 
     @Insert
     fun insertAll(vararg users: Account)
+
+    @Query("UPDATE accounts SET last_updated = :now WHERE id = :followingId")
+    fun updateLastUpdated(followingId: Long, now: OffsetDateTime)
+
+    @Query("SELECT last_updated FROM accounts WHERE id = :followingId")
+    fun getLatestUpdateTime(followingId: Long): OffsetDateTime
 }
 
 @Dao
@@ -48,16 +57,11 @@ interface FollowerDao {
     @Query("SELECT * FROM followers JOIN accounts on followers.following_id = accounts.id WHERE followers.username = :followingUsername")
     fun getAllFollowersOfAUser(followingUsername: String): List<Follower>
 
-    @Query("""SELECT id, timestamp, username, name, following_id
-                    FROM (SELECT * FROM followers
-                          WHERE following_id = :followingId) AS t1
-                    LEFT JOIN (SELECT id as current_id FROM followers
-                               WHERE following_id = :followingId
-                               AND timestamp = (SELECT MAX(timestamp) FROM followers WHERE following_id = :followingId)) AS t2
-                    ON (id = current_id)
-                    WHERE current_id IS NULL
-                    GROUP BY id""")
-    fun getUnfollowersOfAUser(followingId: Long): List<Follower>
+    @Query(
+        """SELECT id, max(timestamp) as timestamp, username, name, following_id FROM followers
+                  WHERE following_id = :followingId GROUP BY id"""
+    )
+    fun getLatestFollowersForEachId(followingId: Long): List<Follower>
 
     @Insert
     fun insertAll(vararg followers: Follower)

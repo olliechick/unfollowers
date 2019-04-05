@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.activity_unfollowers_list.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 
 class UnfollowersListActivity : AppCompatActivity() {
@@ -43,7 +45,7 @@ class UnfollowersListActivity : AppCompatActivity() {
     var unfollowers: ArrayList<Follower> = arrayListOf()
         set(value) {
             field = value
-            Log.i(Util.TAG,"updating unfollowers")
+            Log.i(Util.TAG, "updating unfollowers")
             unfollowerList.adapter = FollowerAdapter(this, field) {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
@@ -67,10 +69,25 @@ class UnfollowersListActivity : AppCompatActivity() {
 
         doAsync {
             initialiseDb()
-            val unf = ArrayList(db.followerDao().getUnfollowersOfAUser(followingId))
+            val latestFollowers = db.followerDao().getLatestFollowersForEachId(followingId)
+            val latestUpdateTime = db.accountDao().getLatestUpdateTime(followingId)
+            val unf: MutableList<Follower> = mutableListOf()
+
+            latestFollowers.forEach {
+                if (!it.timestamp.isEqual(latestUpdateTime)) {
+                    unf.add(it)
+                }
+            }
+
+            Log.i(Util.TAG, "Follower list")
+            val fol = ArrayList(db.followerDao().getAllFollowersOfAUser(followingId))
+            fol.forEach {
+                Log.i(Util.TAG, "${it.username}, ${it.timestamp.format(DateTimeFormatter.ofPattern("hh:mm:ss d MMM"))}")
+            }
+
             db.close()
             uiThread {
-                unfollowers = unf
+                unfollowers = ArrayList(unf)
             }
         }
 
@@ -88,21 +105,8 @@ class UnfollowersListActivity : AppCompatActivity() {
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val bundle = intent.extras
-            if (bundle != null) {
-                if (resultCode == Activity.RESULT_OK) {
-                    Toast.makeText(
-                        context,
-                        bundle.getString("data"),
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        context, "Download failed",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
+            populateList()
+            toast("Done!")
         }
     }
 

@@ -141,7 +141,7 @@ class AccountListActivity : AppCompatActivity() {
                 val name = user.full_name
                 val id = user.pk
                 val created = OffsetDateTime.now()
-                val newAccount = Account(id, username, name, created)
+                val newAccount = Account(id, username, name, created, created)
 
                 initialiseDb()
                 db.accountDao().insertAll(newAccount)
