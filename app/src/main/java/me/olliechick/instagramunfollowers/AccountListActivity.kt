@@ -114,6 +114,12 @@ class AccountListActivity : AppCompatActivityWithMenu() {
                     Toast.makeText(context, "Added $name", Toast.LENGTH_SHORT).show()
                     accountList.adapter?.notifyDataSetChanged() //todo just notify there was one added
                 }
+
+                val intent = Intent(context, GetFollowersService::class.java)
+                intent.putExtra("username", username)
+                intent.putExtra("id", id)
+                startService(intent)
+
             } else {
                 uiThread {
                     Toast.makeText(context, getString(R.string.error_getting_account, username), Toast.LENGTH_SHORT)
