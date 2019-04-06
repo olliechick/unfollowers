@@ -10,12 +10,12 @@ import androidx.room.Room
 import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowersRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramUserSummary
 import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
+import java.lang.Exception
 import java.time.OffsetDateTime
 
 
-class GetFollowersService : IntentService("DownloadService") {
+class GetFollowersService : IntentService("GetFollowersService") {
 
-    private var result = Activity.RESULT_CANCELED
     private lateinit var db: AppDatabase
     private var followingId: Long = 0
 
@@ -26,21 +26,18 @@ class GetFollowersService : IntentService("DownloadService") {
         val followerSummaries = getFollowers(followingId)
         val now = OffsetDateTime.now()
         val followers = instagramUserSummaryListToFollowerList(followerSummaries, now)
-        var saved: Boolean
 
         db = initialiseDb(applicationContext)
         try {
             saveFollowers(followers)
             updateLastUpdated(followingId, now)
-            saved = true
-        } catch (e: SQLiteConstraintException) {
-            saved = false
+            publishResults(true)
+        } catch (e: SQLiteException) {
             Log.e(Util.TAG, e.message)
+            publishResults(false, e)
         } finally {
             db.close()
         }
-
-        publishResults(if (saved) "done :)" else "sql error")
     }
 
     private fun updateLastUpdated(followingId: Long, now: OffsetDateTime) {
@@ -76,10 +73,15 @@ class GetFollowersService : IntentService("DownloadService") {
     }
 
 
-    private fun publishResults(data: String) {
+    private fun publishResults(saved: Boolean, e: Exception?) {
         val intent = Intent(NOTIFICATION)
-        intent.putExtra("data", data)
+        intent.putExtra("saved", saved)
+        if (e != null) intent.putExtra("exception", e)
         sendBroadcast(intent)
+    }
+
+    private fun publishResults(saved: Boolean) {
+        publishResults(saved, null)
     }
 
     companion object {

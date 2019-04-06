@@ -2,7 +2,11 @@ package me.olliechick.instagramunfollowers
 
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Resources
+import android.net.Uri
+import androidx.appcompat.app.AlertDialog
 import androidx.room.Room
 import dev.niekirk.com.instagram4android.Instagram4Android
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest
@@ -17,6 +21,7 @@ class Util {
         val prefsFile = "me.olliechick.instagramunfollowers.prefs"
         val helpUrl = "https://docs.google.com/document/d/1-LhlALXtHtUy6Em9Hb6cTdF0Hbwm4q4N6iKVuOJ0kIE/edit?usp=sharing"
         val TAG = "Unfollowers"
+
 
         fun login(prefs: SharedPreferences, username: String, password: String): Boolean {
 
@@ -82,7 +87,7 @@ class Util {
             ).build()
         }
 
-        private fun isMyServiceRunning(serviceClass: Class<*>, context: Context): Boolean {
+        fun isMyServiceRunning(serviceClass: Class<*>, context: Context): Boolean {
             // Adapted from https://stackoverflow.com/a/5921190/8355496
             val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
             for (service in manager!!.getRunningServices(Integer.MAX_VALUE)) {
@@ -91,6 +96,31 @@ class Util {
                 }
             }
             return false
+        }
+
+        private fun generateEmailErrorDetailsIntent(details: String): Intent {
+            val intent = Intent(Intent.ACTION_SENDTO)
+            intent.data = Uri.parse("mailto:" + Resources.getSystem().getString(R.string.dev_email))
+            intent.putExtra(
+                Intent.EXTRA_SUBJECT,
+                Resources.getSystem().getString(R.string.app_name) + " encountered an error [auto-generated email]"
+            )
+            intent.putExtra(Intent.EXTRA_TEXT, details)
+            return intent
+        }
+
+        fun showErrorDialog(details: String, context: Context) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("An error occurred")
+            builder.setMessage("Do you want to send the details to the developers?")
+            builder.setPositiveButton("Send") { _, _ ->
+                val emailIntent = generateEmailErrorDetailsIntent(
+                    details
+                )
+                context.startActivity(emailIntent)
+            }
+            builder.setNegativeButton("Don't send") { dialog, _ -> dialog.cancel() }
+            builder.show()
         }
     }
 }

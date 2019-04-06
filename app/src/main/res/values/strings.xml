@@ -11,4 +11,5 @@
     <string name="action_log_out">Log out</string>
     <string name="error_getting_account">Sorry, there was an error adding %1$s. Perhaps that user doesn\'t exist?</string>
     <string name="action_help">Help</string>
+    <string name="dev_email" translatable="false">olliechick@gmail.com</string>
 </resources>

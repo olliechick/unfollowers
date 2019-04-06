@@ -15,7 +15,6 @@ import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import java.time.format.DateTimeFormatter
 
 
 class UnfollowersListActivity : AppCompatActivityWithMenu() {
@@ -114,10 +113,23 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
             }
         }
 
+    private fun showErrorDialog(details: String) {
+        Util.showErrorDialog(details, this)
+    }
+
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            populateList()
-            toast("Done!")
+            val saved = intent.getBooleanExtra("saved", false)
+            val e = intent.getSerializableExtra("exception") as Exception?
+            if (saved) {
+                populateList()
+                toast("Done!")
+            } else {
+                showErrorDialog(
+                    "There was an error with the database when attempting to save a new set of followers." +
+                            "\n\nError details:\n\n$e\n\n${e?.stackTrace}"
+                )
+            }
             fab.clearAnimation()
             isRefreshing = false
         }
