@@ -10,21 +10,26 @@
 
         <SwitchPreferenceCompat
             app:key="auto_refresh"
+            app:summary="Automatically check for new unfollowers"
             app:title="Enable auto-refresh" />
 
         <ListPreference
+            app:dependency="auto_refresh"
             app:entries="@array/interval"
             app:entryValues="@array/intervalAlias"
             app:key="refresh_rate"
             app:title="Refresh rate" />
 
         <SwitchPreferenceCompat
+            app:dependency="auto_refresh"
             app:key="refresh_on_startup"
             app:title="Refresh on startup" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:key="misc">
+    <PreferenceCategory
+        app:key="support"
+        app:title="Support">
 
         <Preference
             app:key="feedback"
