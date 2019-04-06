@@ -13,19 +13,9 @@ import org.jetbrains.anko.uiThread
 class SplashScreenActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val totalMillis = 500
-        val timestampStart = System.currentTimeMillis()
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-
         routeToAppropriatePage()
-
-        val elapsedMillis = System.currentTimeMillis() - timestampStart
-        val remainingMillis = totalMillis - elapsedMillis
-
-        Thread.sleep(remainingMillis, 0)
-
     }
 
     private fun routeToAppropriatePage() {
