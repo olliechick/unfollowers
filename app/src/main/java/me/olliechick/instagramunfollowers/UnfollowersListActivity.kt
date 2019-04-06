@@ -1,7 +1,5 @@
 package me.olliechick.instagramunfollowers
 
-import android.app.Activity
-import androidx.room.Room
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,17 +7,15 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_unfollowers_list.*
 import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 
 class UnfollowersListActivity : AppCompatActivityWithMenu() {
@@ -95,12 +91,14 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
         intent.putExtra("id", followingId)
         startService(intent)
         toast("Refreshing...")
+        fab.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely))
     }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             populateList()
             toast("Done!")
+            fab.clearAnimation()
         }
     }
 
