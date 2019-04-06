@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <SwitchPreferenceCompat
+        android:key="autorefresh"
+        app:title="Enable auto-refresh" />
+
+    <Preference
+        android:key="feedback"
+        android:summary="Report technical issues or suggest new features"
+        app:title="Send feedback" />
+
+</androidx.preference.PreferenceScreen>

@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.room.Room
 import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowersRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramUserSummary
+import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
 import java.time.OffsetDateTime
 
 
@@ -27,7 +28,7 @@ class GetFollowersService : IntentService("DownloadService") {
         val followers = instagramUserSummaryListToFollowerList(followerSummaries, now)
         var saved: Boolean
 
-        initialiseDb()
+        db = initialiseDb(applicationContext)
         try {
             saveFollowers(followers)
             updateLastUpdated(followingId, now)
@@ -59,13 +60,6 @@ class GetFollowersService : IntentService("DownloadService") {
             Log.wtf(Util.TAG, "Trying to get followers but instagram = null")
             listOf()
         }
-
-    private fun initialiseDb() {
-        db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "db"
-        ).build()
-    }
 
     private fun saveFollowers(followers: List<Follower>) {
         val ids = db.accountDao().getIds()

@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="me.olliechick.instagramunfollowers">
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -15,29 +15,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         tools:ignore="GoogleAppIndexingWarning">
-
-        <!-- Splash screen -->
         <activity
             android:name=".SplashScreenActivity"
             android:theme="@style/AppTheme.Launcher.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Login page -->
         <activity android:name=".LoginActivity" />
-
-        <!-- List of accounts -->
         <activity android:name=".AccountListActivity" />
-
-        <!-- List of unfollowers -->
         <activity android:name=".UnfollowersListActivity" />
 
-        <!-- Services -->
-        <service android:name="GetFollowersService" >
-        </service>
+        <service android:name=".GetFollowersService" />
+
+        <activity android:name=".AppCompatActivityWithMenu" />
+        <activity android:name=".SettingsActivity" />
     </application>
 
 </manifest>

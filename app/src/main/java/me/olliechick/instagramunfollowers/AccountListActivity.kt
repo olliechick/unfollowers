@@ -18,6 +18,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_account_list.*
 import me.olliechick.instagramunfollowers.Util.Companion.getAccount
 import me.olliechick.instagramunfollowers.Util.Companion.helpUrl
+import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
 import me.olliechick.instagramunfollowers.Util.Companion.logout
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -25,7 +26,7 @@ import org.jetbrains.anko.uiThread
 import java.time.OffsetDateTime
 
 
-class AccountListActivity : AppCompatActivity() {
+class AccountListActivity : AppCompatActivityWithMenu() {
     private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,56 +52,17 @@ class AccountListActivity : AppCompatActivity() {
             }
         }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.mainmenu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_settings -> {
-            toast("Settings page not yet implemented")
-//          val intent = Intent(this, Settings::class.java)
-//          startActivity(intent)
-            true
-        }
-
-        R.id.action_help -> {
-            val uri = Uri.parse(helpUrl)
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
-            true
-        }
-
-
-        R.id.action_log_out -> {
-            val prefs = getSharedPreferences(Util.prefsFile, Context.MODE_PRIVATE)
-            logout(prefs)
-
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            true
-        }
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun initialiseDb() {
-        db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "db"
-        ).build()
-    }
-
     private fun populateList() {
         val layoutManager = LinearLayoutManager(this)
         accountList.layoutManager = layoutManager
         accounts = arrayListOf()
 
         doAsync {
-            initialiseDb()
-            accounts = ArrayList(db.accountDao().getAll())
+            db = initialiseDb(applicationContext)
+            var allAccounts = db.accountDao().getAll()
+            uiThread {
+                accounts = ArrayList(allAccounts)
+            }
             db.close()
         }
 
@@ -143,12 +105,12 @@ class AccountListActivity : AppCompatActivity() {
                 val created = OffsetDateTime.now()
                 val newAccount = Account(id, username, name, created, created)
 
-                initialiseDb()
+                db = initialiseDb(applicationContext)
                 db.accountDao().insertAll(newAccount)
                 db.close()
 
-                accounts.add(newAccount)
                 uiThread {
+                    accounts.add(newAccount)
                     Toast.makeText(context, "Added $name", Toast.LENGTH_SHORT).show()
                     accountList.adapter?.notifyDataSetChanged() //todo just notify there was one added
                 }

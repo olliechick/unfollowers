@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_unfollowers_list.*
+import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -21,7 +22,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 
-class UnfollowersListActivity : AppCompatActivity() {
+class UnfollowersListActivity : AppCompatActivityWithMenu() {
     private lateinit var db: AppDatabase
     private lateinit var followingUsername: String
     private var followingId: Long = 0
@@ -55,20 +56,13 @@ class UnfollowersListActivity : AppCompatActivity() {
             }
         }
 
-    private fun initialiseDb() {
-        db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "db"
-        ).build()
-    }
-
     private fun populateList() {
         val layoutManager = LinearLayoutManager(this)
         unfollowerList.layoutManager = layoutManager
         unfollowers = arrayListOf()
 
         doAsync {
-            initialiseDb()
+            db = initialiseDb(applicationContext)
             val latestFollowers = db.followerDao().getLatestFollowersForEachId(followingId)
             val latestUpdateTime = db.accountDao().getLatestUpdateTime(followingId)
             val unf: MutableList<Follower> = mutableListOf()

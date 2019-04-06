@@ -1,6 +1,8 @@
 package me.olliechick.instagramunfollowers
 
+import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
 import dev.niekirk.com.instagram4android.Instagram4Android
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult
@@ -69,6 +71,13 @@ class Util {
         fun getAccount(username: String): InstagramSearchUsernameResult {
             val result = instagram!!.sendRequest(InstagramSearchUsernameRequest(username))
             return result
+        }
+
+        fun initialiseDb(applicationContext: Context): AppDatabase {
+            return Room.databaseBuilder(
+                applicationContext,
+                AppDatabase::class.java, "db"
+            ).build()
         }
     }
 }
