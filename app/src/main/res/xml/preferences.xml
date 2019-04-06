@@ -4,13 +4,33 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-    <SwitchPreferenceCompat
-        android:key="autorefresh"
-        app:title="Enable auto-refresh" />
+    <PreferenceCategory
+        app:key="auto_refresh_category"
+        app:title="Auto-refresh">
 
-    <Preference
-        android:key="feedback"
-        android:summary="Report technical issues or suggest new features"
-        app:title="Send feedback" />
+        <SwitchPreferenceCompat
+            app:key="auto_refresh"
+            app:title="Enable auto-refresh" />
+
+        <ListPreference
+            app:entries="@array/interval"
+            app:entryValues="@array/intervalAlias"
+            app:key="refresh_rate"
+            app:title="Refresh rate" />
+
+        <SwitchPreferenceCompat
+            app:key="refresh_on_startup"
+            app:title="Refresh on startup" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:key="misc">
+
+        <Preference
+            app:key="feedback"
+            app:summary="Report technical issues or suggest new features"
+            app:title="Send feedback" />
+
+    </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>
