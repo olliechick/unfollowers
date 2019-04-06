@@ -53,13 +53,19 @@ class GetFollowersService : IntentService("DownloadService") {
     ): List<Follower> = followerSummaries.map { Follower(it.pk, now, it.username, it.full_name, followingId) }
 
 
-    private fun getFollowers(id: Long): List<InstagramUserSummary> =
-        if (Util.instagram != null) {
-            Util.instagram!!.sendRequest(InstagramGetUserFollowersRequest(id)).users
-        } else {
-            Log.wtf(Util.TAG, "Trying to get followers but instagram = null")
-            listOf()
+    private fun getFollowers(id: Long): List<InstagramUserSummary> = if (Util.instagram != null) {
+        val users = mutableListOf<InstagramUserSummary>()
+        var res = Util.instagram!!.sendRequest(InstagramGetUserFollowersRequest(id))
+        users.addAll(res.users)
+        while (res.next_max_id != null) {
+            res = Util.instagram!!.sendRequest(InstagramGetUserFollowersRequest(id, res.next_max_id))
+            users.addAll(res.users)
         }
+        users
+    } else {
+        Log.wtf(Util.TAG, "Trying to get followers but instagram = null")
+        listOf()
+    }
 
     private fun saveFollowers(followers: List<Follower>) {
         val ids = db.accountDao().getIds()
