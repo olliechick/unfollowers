@@ -1,5 +1,6 @@
 package me.olliechick.instagramunfollowers
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
@@ -7,6 +8,7 @@ import dev.niekirk.com.instagram4android.Instagram4Android
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult
 import org.jetbrains.anko.doAsync
+
 
 class Util {
 
@@ -78,6 +80,17 @@ class Util {
                 applicationContext,
                 AppDatabase::class.java, "db"
             ).build()
+        }
+
+        private fun isMyServiceRunning(serviceClass: Class<*>, context: Context): Boolean {
+            // Adapted from https://stackoverflow.com/a/5921190/8355496
+            val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+            for (service in manager!!.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.name == service.service.className) {
+                    return true
+                }
+            }
+            return false
         }
     }
 }
