@@ -13,7 +13,7 @@ class AccountAdapter(
     private val context: Context,
     val accounts: ArrayList<Account>,
     val clickListener: (Account) -> Unit
-) : RecyclerView.Adapter<AccountViewHolder>() {
+) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
 
     override fun getItemCount(): Int = accounts.size
 
@@ -38,8 +38,8 @@ class AccountAdapter(
 
         holder.accountName.text = displayText
     }
-}
 
-class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val accountName: TextView = view.findViewById(R.id.accountText)
+    class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val accountName: TextView = view.findViewById(R.id.accountText)
+    }
 }

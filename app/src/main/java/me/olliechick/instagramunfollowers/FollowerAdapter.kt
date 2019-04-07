@@ -13,20 +13,20 @@ class FollowerAdapter(
     private val context: Context,
     val followers: ArrayList<Follower>,
     val clickListener: (Follower) -> Unit
-) : RecyclerView.Adapter<AccountViewHolder>() {
+) : RecyclerView.Adapter<FollowerAdapter.FollowerViewHolder>() {
 
     override fun getItemCount(): Int = followers.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): AccountViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): FollowerViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.account_item, parent, false)
-        val holder = AccountViewHolder(view)
+        val holder = FollowerViewHolder(view)
 
         holder.itemView.setOnClickListener { clickListener(followers[holder.adapterPosition]) }
 
         return holder
     }
 
-    override fun onBindViewHolder(holder: AccountViewHolder, i: Int) {
+    override fun onBindViewHolder(holder: FollowerViewHolder, i: Int) {
         val name = followers[i].name
         val username = followers[i].username
         val created = followers[i].timestamp
@@ -37,5 +37,9 @@ class FollowerAdapter(
         displayText += "\n(${created.format(DateTimeFormatter.ofPattern("hh:mm:ss d MMM"))})"
 
         holder.accountName.text = displayText
+    }
+
+    class FollowerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val accountName: TextView = view.findViewById(R.id.accountText)
     }
 }
