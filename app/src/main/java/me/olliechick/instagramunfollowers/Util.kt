@@ -23,17 +23,17 @@ class Util {
         val TAG = "Unfollowers"
 
 
-        fun login(prefs: SharedPreferences, username: String, password: String): Boolean {
+        fun login(prefs: SharedPreferences, username: String, password: String, save: Boolean): Boolean {
 
             instagram = Instagram4Android.builder().username(username).password(password).build()
             instagram!!.setup()
 
             val instagramLoginResult = instagram!!.login()
-            doAsync {
-                saveCredentials(prefs, username, password)
+            if (save) {
+                doAsync {
+                    saveCredentials(prefs, username, password)
+                }
             }
-
-
             return instagramLoginResult.status == "ok"
         }
 
@@ -45,7 +45,7 @@ class Util {
                 return false
             }
 
-            return login(prefs, username, password)
+            return login(prefs, username, password, false)
         }
 
         fun logout(prefs: SharedPreferences) {
@@ -122,5 +122,25 @@ class Util {
             builder.setNegativeButton("Don't send") { dialog, _ -> dialog.cancel() }
             builder.show()
         }
+
+        fun showInternetConnectivityErrorDialog(context: Context, retry: () -> Unit) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Internet connectivity issue")
+            builder.setMessage("Please connect to the internet and try again.")
+            builder.setPositiveButton("Retry") { _, _ -> retry() }
+            builder.setNegativeButton("Dismiss") { dialog, _ -> dialog.cancel() }
+            builder.show()
+        }
+
+        fun showInternetConnectivityErrorDialog(context: Context, retry: () -> Unit, closeApp: () -> Unit) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Internet connectivity issue")
+            builder.setMessage("Please connect to the internet and try again.")
+            builder.setPositiveButton("Retry") { _, _ -> retry() }
+            builder.setNegativeButton("Close app") { _, _ -> closeApp() }
+            builder.show()
+        }
+
+
     }
 }

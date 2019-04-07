@@ -1,32 +1,20 @@
 package me.olliechick.instagramunfollowers
 
-import androidx.room.Room
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import android.text.InputType
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.EditText
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_account_list.*
 import me.olliechick.instagramunfollowers.Util.Companion.getAccount
-import me.olliechick.instagramunfollowers.Util.Companion.helpUrl
 import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
-import me.olliechick.instagramunfollowers.Util.Companion.logout
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import java.time.OffsetDateTime
 
 
-class AccountListActivity : AppCompatActivityWithMenu() {
+class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragment.AddAccountDialogListener {
     private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,29 +59,10 @@ class AccountListActivity : AppCompatActivityWithMenu() {
     }
 
     private fun openAddAccountDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("Add an account to track:")
-
-        // Set up the input
-        val input = EditText(this)
-
-        // Specify the type of input expected
-        input.inputType = InputType.TYPE_CLASS_TEXT
-        builder.setView(input)
-
-        // Set up the buttons
-        builder.setPositiveButton(
-            "Add"
-        ) { _, _ -> addAccount(input.text.toString().toLowerCase()) }
-
-        builder.setNegativeButton(
-            "Cancel"
-        ) { dialog, _ -> dialog.cancel() }
-
-        builder.show()
+        AddAccountDialogFragment().show(supportFragmentManager, "addAccount")
     }
 
-    private fun addAccount(username: String) {
+    override fun onAccountAdded(username: String) {
         toast("Adding $username...")
         val context = this
         doAsync {

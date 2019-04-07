@@ -1,16 +1,16 @@
 package me.olliechick.instagramunfollowers
 
 
-import android.app.Activity
 import android.app.IntentService
+import android.content.Context
 import android.content.Intent
-import android.database.sqlite.SQLiteConstraintException
+import android.database.sqlite.SQLiteException
 import android.util.Log
-import androidx.room.Room
 import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowersRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramUserSummary
 import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
-import java.lang.Exception
+import me.olliechick.instagramunfollowers.Util.Companion.loginFromSharedPrefs
+import me.olliechick.instagramunfollowers.Util.Companion.prefsFile
 import java.time.OffsetDateTime
 
 
@@ -50,7 +50,16 @@ class GetFollowersService : IntentService("GetFollowersService") {
     ): List<Follower> = followerSummaries.map { Follower(it.pk, now, it.username, it.full_name, followingId) }
 
 
-    private fun getFollowers(id: Long): List<InstagramUserSummary> = if (Util.instagram != null) {
+    private fun getFollowers(id: Long): List<InstagramUserSummary> {
+        if (Util.instagram == null) {
+            val loginSuccess = loginFromSharedPrefs(getSharedPreferences(prefsFile, Context.MODE_PRIVATE))
+            if (!loginSuccess) throw IllegalArgumentException("Login failed.")
+            if (Util.instagram == null) {
+                Log.wtf(Util.TAG, "instagram is still null after logging in from sharedprefs was successful")
+                return listOf()
+            }
+        }
+
         val users = mutableListOf<InstagramUserSummary>()
         var res = Util.instagram!!.sendRequest(InstagramGetUserFollowersRequest(id))
         users.addAll(res.users)
@@ -58,10 +67,7 @@ class GetFollowersService : IntentService("GetFollowersService") {
             res = Util.instagram!!.sendRequest(InstagramGetUserFollowersRequest(id, res.next_max_id))
             users.addAll(res.users)
         }
-        users
-    } else {
-        Log.wtf(Util.TAG, "Trying to get followers but instagram = null")
-        listOf()
+        return users
     }
 
     private fun saveFollowers(followers: List<Follower>) {
