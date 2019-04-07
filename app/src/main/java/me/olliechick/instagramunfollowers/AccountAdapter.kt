@@ -29,12 +29,10 @@ class AccountAdapter(
     override fun onBindViewHolder(holder: AccountViewHolder, i: Int) {
         val name = accounts[i].name
         val username = accounts[i].username
-        val created = accounts[i].created
 
         var displayText = ""
-        if (name.replace("\\s".toRegex(), "") == "") displayText = username
-        else displayText = "$name ($username)"
-        displayText += " (${created.format(DateTimeFormatter.ofPattern("d MMM"))})"
+        displayText = if (name.replace("\\s".toRegex(), "") == "") username
+        else context.getString(R.string.account_format, name, username)
 
         holder.accountName.text = displayText
     }

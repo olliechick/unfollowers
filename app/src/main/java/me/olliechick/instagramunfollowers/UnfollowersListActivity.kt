@@ -7,18 +7,19 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_unfollowers_list.*
-import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
+import me.olliechick.instagramunfollowers.Util.Companion.getCurrentUnfollowers
+import me.olliechick.instagramunfollowers.Util.Companion.openInstagramAccountIntent
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
 
 class UnfollowersListActivity : AppCompatActivityWithMenu() {
-    private lateinit var db: AppDatabase
     private lateinit var followingUsername: String
     private var followingId: Long = 0
     private var isRefreshing: Boolean = false
@@ -59,23 +60,24 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
     }
 
     private fun populateList() {
+        unfollowerList.visibility = View.GONE
+        empty_view.visibility = View.VISIBLE
+        empty_view.text = getString(R.string.loading)
         val layoutManager = LinearLayoutManager(this)
         unfollowerList.layoutManager = layoutManager
         unfollowers = arrayListOf()
 
         doAsync {
-            db = initialiseDb(applicationContext)
-            val latestFollowers = db.followerDao().getLatestFollowersForEachId(followingId)
-            val latestUpdateTime = db.accountDao().getLatestUpdateTime(followingId)
-            db.close()
-
-            val unf: MutableList<Follower> = mutableListOf()
-            latestFollowers.forEach {
-                if (!it.timestamp.isEqual(latestUpdateTime)) unf.add(it)
-            }
-
+            val unf = getCurrentUnfollowers(applicationContext, followingId)
             uiThread {
                 unfollowers = ArrayList(unf)
+                if (unfollowers.size == 0) {
+                    empty_view.text = getString(R.string.no_unfollowers)
+                } else {
+                    unfollowerList.visibility = View.VISIBLE
+                    empty_view.visibility = View.GONE
+
+                }
             }
         }
 
@@ -84,14 +86,13 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
     }
 
     private fun refresh() {
-        if (isRefreshing) toast("Refresh already in progress...")
+        if (isRefreshing) toast(getString(R.string.refresh_already))
         else {
             isRefreshing = true
             val intent = Intent(this, GetFollowersService::class.java)
-            intent.putExtra("username", followingUsername)
             intent.putExtra("id", followingId)
             startService(intent)
-            toast("Refreshing...")
+            toast(getString(R.string.refreshing))
             spinRefreshFab()
         }
     }
@@ -105,11 +106,7 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
             field = value
             Log.i(Util.TAG, "updating unfollowers")
             unfollowerList.adapter = FollowerAdapter(this, field) {
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.instagram.com/${it.username}/")
-                )
-                startActivity(intent)
+                startActivity(openInstagramAccountIntent(it.username))
             }
         }
 
@@ -123,16 +120,12 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
             val e = intent.getSerializableExtra("exception") as Exception?
             if (saved) {
                 populateList()
-                toast("Done!")
+                toast(getString(R.string.done))
             } else {
-                showErrorDialog(
-                    "There was an error with the database when attempting to save a new set of followers." +
-                            "\n\nError details:\n\n$e\n\n${e?.stackTrace}"
-                )
+                showErrorDialog(getString(R.string.db_error, e, e?.stackTrace))
             }
             fab.clearAnimation()
             isRefreshing = false
         }
     }
-
 }

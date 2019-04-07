@@ -1,17 +1,24 @@
 package me.olliechick.instagramunfollowers
 
 import android.app.ActivityManager
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.net.Uri
+import android.os.SystemClock
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.preference.PreferenceManager
 import androidx.room.Room
 import dev.niekirk.com.instagram4android.Instagram4Android
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
+import java.util.*
 
 
 class Util {
@@ -103,7 +110,7 @@ class Util {
             intent.data = Uri.parse("mailto:" + Resources.getSystem().getString(R.string.dev_email))
             intent.putExtra(
                 Intent.EXTRA_SUBJECT,
-                Resources.getSystem().getString(R.string.app_name) + " encountered an error [auto-generated email]"
+                Resources.getSystem().getString(R.string.email_subject)
             )
             intent.putExtra(Intent.EXTRA_TEXT, details)
             return intent
@@ -140,6 +147,88 @@ class Util {
             builder.setNegativeButton("Close app") { _, _ -> closeApp() }
             builder.show()
         }
+
+        fun scheduleGetFollowers(context: Context) {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+
+            if (prefs.getBoolean("auto_refresh", true)) {
+                val today = Calendar.getInstance().apply {
+                    timeInMillis = System.currentTimeMillis()
+                    set(Calendar.HOUR_OF_DAY, 6)
+                    set(Calendar.MINUTE, 0)
+                }
+
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+                val intervalMillis = minutesToAlarmInterval(prefs.getString("refresh_rate", ""))
+                Log.i(TAG, "Notifs set to every $intervalMillis millis.")
+
+                alarmManager.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    today.timeInMillis,
+                    intervalMillis,
+                    pendingGetFollowersIntent(context)
+                )
+            }
+        }
+
+        fun getFollowersNow(context: Context) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.set(
+                AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + 100,
+                pendingGetFollowersIntent(context)
+            )
+
+        }
+
+        private fun pendingGetFollowersIntent(context: Context): PendingIntent {
+            return Intent(context, GetFollowersReceiver::class.java).let {
+                PendingIntent.getBroadcast(context, 0, it, 0)
+            }
+        }
+
+        fun setDefaults(context: Context) {
+            doAsync {
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val refreshRate = sharedPreferences.getString("refresh_rate", "")
+                if (refreshRate == "") {
+                    // This must be the first time using the app
+                    val prefsEditor = sharedPreferences.edit()
+                    prefsEditor.putString("refresh_rate", "720")
+                    prefsEditor.putBoolean("auto_refresh", true)
+                    prefsEditor.putBoolean("refresh_on_startup", true)
+                    prefsEditor.apply()
+                }
+            }
+        }
+
+        fun minutesToAlarmInterval(minutes: String?) = when (minutes) {
+            "30" -> AlarmManager.INTERVAL_HALF_HOUR
+            "60" -> AlarmManager.INTERVAL_HOUR
+            "720" -> AlarmManager.INTERVAL_HALF_DAY
+            "1440" -> AlarmManager.INTERVAL_DAY
+            else -> AlarmManager.INTERVAL_HALF_DAY
+        }
+
+        fun getCurrentUnfollowers(context: Context, followingId: Long): List<Follower> {
+            val db = initialiseDb(context)
+            val latestFollowers = db.followerDao().getLatestFollowersForEachId(followingId)
+            val latestUpdateTime = db.accountDao().getLatestUpdateTime(followingId)
+            db.close()
+
+            val unfollowers: MutableList<Follower> = mutableListOf()
+            latestFollowers.forEach {
+                if (!it.timestamp.isEqual(latestUpdateTime)) unfollowers.add(it)
+            }
+
+            return unfollowers
+        }
+
+        fun openInstagramAccountIntent(username: String) = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("https://www.instagram.com/$username/")
+        )
 
 
     }

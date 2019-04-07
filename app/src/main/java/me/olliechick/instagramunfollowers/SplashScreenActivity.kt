@@ -1,12 +1,15 @@
 package me.olliechick.instagramunfollowers
 
-import android.app.Activity
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import androidx.preference.PreferenceManager
 import me.olliechick.instagramunfollowers.Util.Companion.loginFromSharedPrefs
 import me.olliechick.instagramunfollowers.Util.Companion.prefsFile
+import me.olliechick.instagramunfollowers.Util.Companion.setDefaults
 import me.olliechick.instagramunfollowers.Util.Companion.showInternetConnectivityErrorDialog
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -14,11 +17,33 @@ import org.jetbrains.anko.uiThread
 import java.io.IOException
 
 class SplashScreenActivity : Activity() {
+    private val getFollowersReceiver = GetFollowersReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+//        val intent = Intent(applicationContext, AlarmReceiver::class.java).let {
+//            PendingIntent.getBroadcast(applicationContext, 0, it, 0)
+//        }
+        registerReceiver(getFollowersReceiver, IntentFilter(
+                GetFollowersService.NOTIFICATION
+                )
+        )
+        setDefaults(this)
+        createNotificationChannel()
         routeToAppropriatePage()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(getFollowersReceiver)
+    }
+
+    private fun createNotificationChannel() {
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(Notification.CATEGORY_SOCIAL, getString(R.string.new_unfollowers), importance)
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 
     private fun routeToAppropriatePage() {
@@ -29,7 +54,7 @@ class SplashScreenActivity : Activity() {
             goToLoginPage()
         } else {
             val context = this
-            toast("Logging in to $username...")
+            toast(getString(R.string.logging_in_to, username))
             doAsync {
                 try {
                     val loginSuccess = loginFromSharedPrefs(prefs)
@@ -40,14 +65,18 @@ class SplashScreenActivity : Activity() {
                             startActivity(intent)
                             finish()
                         } else {
-                            toast("Your username and password for $username no longer work :(")
+                            toast(getString(R.string.username_and_password_broken, username))
                             goToLoginPage()
                         }
                     }
                 } catch (e: IOException) {
                     Log.i(Util.TAG, "${e.message}")
                     uiThread {
-                        showInternetConnectivityErrorDialog(context, ::routeToAppropriatePage, context::finishAndRemoveTask)
+                        showInternetConnectivityErrorDialog(
+                            context,
+                            ::routeToAppropriatePage,
+                            context::finishAndRemoveTask
+                        )
                     }
                 }
             }

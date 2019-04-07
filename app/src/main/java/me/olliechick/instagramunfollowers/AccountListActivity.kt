@@ -2,6 +2,7 @@ package me.olliechick.instagramunfollowers
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +23,7 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
         setContentView(R.layout.activity_account_list)
 
         val actionBar = supportActionBar
-        actionBar?.title = "Accounts"
+        actionBar?.title = getString(R.string.accounts)
 
         fab.setOnClickListener { openAddAccountDialog() }
 
@@ -47,9 +48,13 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
 
         doAsync {
             db = initialiseDb(applicationContext)
-            var allAccounts = db.accountDao().getAll()
+            val allAccounts = db.accountDao().getAll()
             uiThread {
                 accounts = ArrayList(allAccounts)
+                if (accounts.size == 0) {
+                    accountList.visibility = View.GONE
+                    empty_view.visibility = View.VISIBLE
+                }
             }
             db.close()
         }
@@ -80,7 +85,7 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
 
                 uiThread {
                     accounts.add(newAccount)
-                    Toast.makeText(context, "Added $name", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.added, name), Toast.LENGTH_SHORT).show()
                     accountList.adapter?.notifyDataSetChanged() //todo just notify there was one added
                 }
 

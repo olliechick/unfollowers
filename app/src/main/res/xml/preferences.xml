@@ -6,35 +6,36 @@
 
     <PreferenceCategory
         app:key="auto_refresh_category"
-        app:title="Auto-refresh">
+        app:title="@string/auto_refresh">
 
         <SwitchPreferenceCompat
             app:key="auto_refresh"
-            app:summary="Automatically check for new unfollowers"
-            app:title="Enable auto-refresh" />
+            app:summary="@string/automatically_check"
+            app:title="@string/enable_auto_refresh" />
 
         <ListPreference
+            android:id="@+id/refresh_rate_list"
             app:dependency="auto_refresh"
             app:entries="@array/interval"
             app:entryValues="@array/intervalAlias"
             app:key="refresh_rate"
-            app:title="Refresh rate" />
+            app:title="@string/refresh_rate" />
 
         <SwitchPreferenceCompat
             app:dependency="auto_refresh"
             app:key="refresh_on_startup"
-            app:title="Refresh on startup" />
+            app:title="@string/refresh_startup" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
         app:key="support"
-        app:title="Support">
+        app:title="@string/support">
 
         <Preference
             app:key="feedback"
-            app:summary="Report technical issues or suggest new features"
-            app:title="Send feedback" />
+            app:summary="@string/report_issues"
+            app:title="@string/send_feedback" />
 
     </PreferenceCategory>
 

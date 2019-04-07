@@ -3,10 +3,6 @@
     <string-array name="interval">
         <item>"30 minutes"</item>
         <item>"1 hour"</item>
-        <item>"2 hours"</item>
-        <item>"4 hours"</item>
-        <item>"6 hours"</item>
-        <item>"8 hours"</item>
         <item>"12 hours"</item>
         <item>"24 hours"</item>
     </string-array>
@@ -14,10 +10,6 @@
     <string-array name="intervalAlias">
         <item>30</item>
         <item>60</item>
-        <item>120</item>
-        <item>240</item>
-        <item>360</item>
-        <item>420</item>
         <item>720</item>
         <item>1440</item>
     </string-array>

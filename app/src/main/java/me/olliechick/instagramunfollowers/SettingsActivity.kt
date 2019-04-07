@@ -14,6 +14,6 @@ class SettingsActivity : AppCompatActivity() {
             .commit()
         setContentView(R.layout.activity_settings)
         val actionBar = supportActionBar
-        actionBar?.title = "Settings"
+        actionBar?.title = getString(R.string.settings)
     }
 }

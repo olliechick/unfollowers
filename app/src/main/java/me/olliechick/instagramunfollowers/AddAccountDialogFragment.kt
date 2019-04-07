@@ -40,15 +40,15 @@ class AddAccountDialogFragment : DialogFragment() {
             val builder = AlertDialog.Builder(it)
             val view = requireActivity().layoutInflater.inflate(R.layout.add_account_dialog, null)
             builder.setView(view)
-            builder.setTitle("Add an account:")
+            builder.setTitle(getString(R.string.add_account))
             // Set up the buttons
             builder.setPositiveButton(
-                "Add"
+                getString(R.string.add)
             ) { dialog, _ ->  run {
                 listener.onAccountAdded(view.input?.text.toString().toLowerCase()) } }
 
             builder.setNegativeButton(
-                "Cancel"
+                getString(R.string.cancel)
             ) { dialog, _ -> dialog.cancel() }
 
             builder.create()

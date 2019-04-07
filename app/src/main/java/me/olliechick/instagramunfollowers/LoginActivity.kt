@@ -42,7 +42,7 @@ class LoginActivity : Activity() {
         if (username_text.isEmpty()) emptyFieldError(username)
         else if (password_text.isEmpty()) emptyFieldError(password)
         else {
-            toast("Logging in...")
+            toast(getString(R.string.logging_in))
             //todo block UI to avoid user pressing button more than once (see how default login activity does it)
 
             val context = this

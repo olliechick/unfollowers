@@ -33,7 +33,7 @@ class FollowerAdapter(
 
         var displayText  = ""
         if (name.replace("\\s".toRegex(), "") == "") displayText = username
-        else displayText = "$name ($username)"
+        else displayText = context.getString(R.string.account_format, name, username)
         displayText += "\n(${created.format(DateTimeFormatter.ofPattern("hh:mm:ss d MMM"))})"
 
         holder.accountName.text = displayText

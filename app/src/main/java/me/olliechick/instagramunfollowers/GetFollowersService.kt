@@ -8,37 +8,56 @@ import android.database.sqlite.SQLiteException
 import android.util.Log
 import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowersRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramUserSummary
+import me.olliechick.instagramunfollowers.Util.Companion.TAG
 import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
 import me.olliechick.instagramunfollowers.Util.Companion.loginFromSharedPrefs
 import me.olliechick.instagramunfollowers.Util.Companion.prefsFile
 import java.time.OffsetDateTime
 
 
+/**
+ * get follower list for each id at the current time (now), and add to db
+ */
 class GetFollowersService : IntentService("GetFollowersService") {
 
     private lateinit var db: AppDatabase
-    private var followingId: Long = 0
+    private var followingId: Long = -1
+    private var followingIds: LongArray? = longArrayOf(-1)
 
     // will be called asynchronously by Android
     override fun onHandleIntent(intent: Intent?) {
-        followingId = intent!!.getLongExtra("id", 0)
-        if (followingId.toInt() == 0) Log.e(Util.TAG, "Id = 0 in GetFollowersService")
-        val followerSummaries = getFollowers(followingId)
-        val now = OffsetDateTime.now()
-        val followers = instagramUserSummaryListToFollowerList(followerSummaries, now)
+        followingId = intent!!.getLongExtra("id", -1)
 
-        db = initialiseDb(applicationContext)
-        try {
-            saveFollowers(followers)
-            updateLastUpdated(followingId, now)
-            publishResults(true)
-        } catch (e: SQLiteException) {
-            Log.e(Util.TAG, e.message)
-            publishResults(false, e)
-        } finally {
-            db.close()
+        followingIds = if (followingId.toInt() == -1) intent.getLongArrayExtra("ids")
+        else longArrayOf(followingId)
+
+        if (followingIds == null) Log.e(Util.TAG, "No id or ids in GetFollowersService")
+        else {
+            val followersMap = mutableMapOf<Long, List<Follower>>()
+            val now = OffsetDateTime.now()
+            followingIds!!.forEach {
+                val followerSummaries = getFollowers(it)
+                followersMap[it] = instagramUserSummaryListToFollowerList(followerSummaries, now, it)
+            }
+
+            db = initialiseDb(applicationContext)
+            try {
+                followingIds!!.forEach {
+                    Log.i(TAG, "Saving followers for $it.")
+                    saveFollowers(followersMap[it]!!)
+                    Log.i(TAG, "Updating last updated time.")
+                    updateLastUpdated(it, now)
+                }
+                publishResults(true)
+            } catch (e: SQLiteException) {
+                Log.e(Util.TAG, "Error when getting followers: ${e.message}")
+                publishResults(false, e)
+            } finally {
+                db.close()
+            }
         }
     }
+
 
     private fun updateLastUpdated(followingId: Long, now: OffsetDateTime) {
         db.accountDao().updateLastUpdated(followingId, now)
@@ -46,7 +65,8 @@ class GetFollowersService : IntentService("GetFollowersService") {
 
     private fun instagramUserSummaryListToFollowerList(
         followerSummaries: List<InstagramUserSummary>,
-        now: OffsetDateTime
+        now: OffsetDateTime,
+        followingId: Long
     ): List<Follower> = followerSummaries.map { Follower(it.pk, now, it.username, it.full_name, followingId) }
 
 
@@ -75,11 +95,13 @@ class GetFollowersService : IntentService("GetFollowersService") {
         ids.forEach {
             Log.i(Util.TAG, "$it (type = ${it.javaClass.kotlin})")
         }
+        Log.i(TAG, "${followers.map { it }.toTypedArray()[0]}")
         db.followerDao().insertAll(*followers.map { it }.toTypedArray())
     }
 
 
     private fun publishResults(saved: Boolean, e: Exception?) {
+        Log.i(TAG, "Publishing")
         val intent = Intent(NOTIFICATION)
         intent.putExtra("saved", saved)
         if (e != null) intent.putExtra("exception", e)
@@ -91,6 +113,6 @@ class GetFollowersService : IntentService("GetFollowersService") {
     }
 
     companion object {
-        val NOTIFICATION = "me.olliechick.instagramunfollowers.UnfollowersListActivity"
+        val NOTIFICATION = "me.olliechick.instagramunfollowers.GET_FOLLOWERS_SERVICE"
     }
 }
