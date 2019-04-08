@@ -19,6 +19,7 @@
             app:entries="@array/interval"
             app:entryValues="@array/intervalAlias"
             app:key="refresh_rate"
+            android:summary="%s"
             app:title="@string/refresh_rate" />
 
         <SwitchPreferenceCompat
