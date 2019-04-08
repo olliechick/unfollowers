@@ -33,7 +33,7 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
 
         followingUsername = intent.getStringExtra("username")
         followingId = intent.getLongExtra("id", 0)
-        if (followingId.toInt() == 0) Log.e(Util.TAG, "Id = 0 in UnfollowersListActivity")
+        if (followingId.toInt() == 0) if (Debug.LOG) Log.e(Util.TAG, "Id = 0 in UnfollowersListActivity")
 
         val actionBar = supportActionBar
         actionBar?.title = "${getString(R.string.app_name)}: $followingUsername"
@@ -149,7 +149,7 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
     private var unfollowers: ArrayList<Follower> = arrayListOf()
         set(value) {
             field = value
-            Log.i(Util.TAG, "updating unfollowers")
+            if (Debug.LOG) Log.i(Util.TAG, "updating unfollowers")
             unfollowerList.adapter = FollowerAdapter(this, field) {
                 startActivity(openInstagramAccountIntent(it.username))
             }

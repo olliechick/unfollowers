@@ -70,7 +70,7 @@ class SplashScreenActivity : Activity() {
                         }
                     }
                 } catch (e: IOException) {
-                    Log.i(Util.TAG, "${e.message}")
+                    if (Debug.LOG) Log.i(Util.TAG, "${e.message}")
                     uiThread {
                         showInternetConnectivityErrorDialog(
                             context,

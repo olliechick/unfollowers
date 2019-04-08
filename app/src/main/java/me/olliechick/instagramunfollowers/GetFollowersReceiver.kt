@@ -58,7 +58,7 @@ class GetFollowersReceiver : BroadcastReceiver() {
         accounts.forEach {
             val priorUnfollowers = getCurrentUnfollowers(context, it.id)
             unfLists.add(UnfList(it, priorUnfollowers))
-            Log.i(TAG, "Prior unfollowers: $priorUnfollowers")
+            if (Debug.LOG) Log.i(TAG, "Prior unfollowers: $priorUnfollowers")
         }
 
         return unfLists
@@ -70,22 +70,22 @@ class GetFollowersReceiver : BroadcastReceiver() {
 
         unfLists.forEach {
             val currentUnfollowers = getCurrentUnfollowers(context, it.account.id)
-            Log.i(TAG, "Current unfollowers: $currentUnfollowers")
+            if (Debug.LOG) Log.i(TAG, "Current unfollowers: $currentUnfollowers")
 
             newUnfollowers.addAll(currentUnfollowers.minus(it.priorUnfollowers))
-            Log.i(TAG, "New unfollowers: $newUnfollowers")
+            if (Debug.LOG) Log.i(TAG, "New unfollowers: $newUnfollowers")
         }
 
         // TEST UNFOLLOWER:
-//        newUnfollowers.add(
-//            Follower(
-//                3,
-//                OffsetDateTime.now().minusHours(1),
-//                "iphone",
-//                "iPhone",
-//                32534
-//            )
-//        )
+        newUnfollowers.add(
+            Follower(
+                3,
+                OffsetDateTime.now().minusHours(1),
+                "olliechickdev",
+                "Ollie Chick",
+                32534
+            )
+        )
 
         return newUnfollowers
     }
@@ -113,7 +113,7 @@ class GetFollowersReceiver : BroadcastReceiver() {
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.i(TAG, "Loud and clear.")
+            if (Debug.LOG) Log.i(TAG, "Loud and clear.")
             val receiver = this
 
             doAsync {

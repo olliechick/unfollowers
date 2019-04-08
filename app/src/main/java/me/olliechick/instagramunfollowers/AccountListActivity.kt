@@ -89,7 +89,7 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
                     val newAccount = Account(id, username, name, created, created)
 
                     uiThread {
-                        Log.i(TAG, "${newAccount.username} has ${user.follower_count} followers.")
+                        if (Debug.LOG) Log.i(TAG, "${newAccount.username} has ${user.follower_count} followers.")
                         showAddAccountConfirmationDialog(newAccount, user.follower_count, context)
                     }
                 } else {
