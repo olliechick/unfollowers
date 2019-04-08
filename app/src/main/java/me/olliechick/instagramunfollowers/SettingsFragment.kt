@@ -15,8 +15,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun initSettings() {
         findPreference("feedback").setOnPreferenceClickListener {
             val intent = Intent(Intent.ACTION_SENDTO)
-            intent.data = Uri.parse("mailto:" + Resources.getSystem().getString(R.string.dev_email))
-            intent.putExtra(Intent.EXTRA_SUBJECT, Resources.getSystem().getString(R.string.app_name))
+            intent.data = Uri.parse("mailto:" + getString(R.string.dev_email))
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
             startActivity(intent)
             true
         }
