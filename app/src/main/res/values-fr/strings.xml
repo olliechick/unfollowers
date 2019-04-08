@@ -41,4 +41,6 @@
     <string name="report_issues">Signaler des problèmes techniques ou proposer de nouvelles fonctionnalités</string>
     <string name="send_feedback">Envoyer des commentaires</string>
     <string name="auto_refresh">Actualisation automatique</string>
+    <string name="username_invalid">Désolé, "%1$s" n\'est pas un nom d\'utilisateur valide. Les noms d\'utilisateur valides ne contiennent que des lettres, des chiffres, des traits de soulignement et des points.</string>
+    <string name="adding_username">Ajout de %1$s…</string>
 </resources>

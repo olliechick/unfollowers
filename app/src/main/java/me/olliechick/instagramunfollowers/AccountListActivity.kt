@@ -68,40 +68,48 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
     }
 
     override fun onAccountAdded(username: String) {
-        toast("Adding $username...")
-        val context = this
-        doAsync {
-            val result = getAccount(username)
-            if (result.status.toLowerCase() == "ok") {
-                val user = result.user
-                val name = user.full_name
-                val id = user.pk
-                val created = OffsetDateTime.now()
-                val newAccount = Account(id, username, name, created, created)
+        // username had already been made lowercase
+        if (!usernameIsValid(username)) toast(getString(R.string.username_invalid, username))
+        else {
+            toast(getString(R.string.adding_username, username))
+            val context = this
+            doAsync {
+                val result = getAccount(username)
+                if (result.status.toLowerCase() == "ok") {
+                    val user = result.user
+                    val name = user.full_name
+                    val id = user.pk
+                    val created = OffsetDateTime.now()
+                    val newAccount = Account(id, username, name, created, created)
 
-                db = initialiseDb(applicationContext)
-                db.accountDao().insertAll(newAccount)
-                db.close()
+                    db = initialiseDb(applicationContext)
+                    db.accountDao().insertAll(newAccount)
+                    db.close()
 
-                uiThread {
-                    accounts.add(newAccount)
-                    Toast.makeText(context, getString(R.string.added, name), Toast.LENGTH_SHORT).show()
-                    accountList.adapter?.notifyDataSetChanged() //todo just notify there was one added
-                }
+                    uiThread {
+                        accounts.add(newAccount)
+                        Toast.makeText(context, getString(R.string.added, name), Toast.LENGTH_SHORT).show()
+                        accountList.adapter?.notifyDataSetChanged() //todo just notify there was one added
+                    }
 
-                val intent = Intent(context, GetFollowersService::class.java)
-                intent.putExtra("username", username)
-                intent.putExtra("id", id)
-                startService(intent)
+                    val intent = Intent(context, GetFollowersService::class.java)
+                    intent.putExtra("username", username)
+                    intent.putExtra("id", id)
+                    startService(intent)
 
-            } else {
-                uiThread {
-                    Toast.makeText(context, getString(R.string.error_getting_account, username), Toast.LENGTH_SHORT)
-                        .show()
+                } else {
+                    uiThread {
+                        Toast.makeText(context, getString(R.string.error_getting_account, username), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
                 }
 
             }
-
         }
+    }
+
+    private fun usernameIsValid(username: String): Boolean {
+        return username.length <= 30 && username.matches("[a-z0-9._]+".toRegex())
     }
 }

@@ -42,4 +42,6 @@
     <string name="send_feedback">Send feedback</string>
     <string name="auto_refresh">Auto-refresh</string>
     <string name="refresh_rate">Refresh rate</string>
+    <string name="username_invalid">Sorry, but "%1$s" is not a valid username. Valid usernames only contain letters, numbers, underscores, and periods.</string>
+    <string name="adding_username">Adding %1$s…</string>
 </resources>
