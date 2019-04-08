@@ -78,4 +78,5 @@
     </plurals>
     <string name="username_already_added">Vous avez déjà ajouté %1$s!</string>
     <string name="action_delete">Effacez</string>
+    <string name="confirm_deletion">Êtes-vous sûr de vouloir effacer %1$s?</string>
 </resources>

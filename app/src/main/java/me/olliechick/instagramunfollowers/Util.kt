@@ -219,7 +219,7 @@ class Util {
 
             val unfollowers: MutableList<Follower> = mutableListOf()
             latestFollowers.forEach {
-                if (!it.timestamp.isEqual(latestUpdateTime)) unfollowers.add(it)
+                if (!it?.timestamp.isEqual(latestUpdateTime)) unfollowers.add(it)
             }
 
             return unfollowers

@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_unfollowers_list.*
@@ -50,7 +51,12 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_delete -> {
-            deleteItem()
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage(getString(R.string.confirm_deletion, followingUsername))
+            builder.setPositiveButton(R.string.action_delete) { _, _ -> deleteItem() }
+            builder.setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+            builder.show()
+
             unfollowerList.adapter?.notifyDataSetChanged() //todo just notify there was one deleted
             true
         }
