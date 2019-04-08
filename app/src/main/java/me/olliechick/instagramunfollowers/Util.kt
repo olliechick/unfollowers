@@ -17,7 +17,6 @@ import dev.niekirk.com.instagram4android.Instagram4Android
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
 import java.util.*
 
 
@@ -36,12 +35,13 @@ class Util {
             instagram!!.setup()
 
             val instagramLoginResult = instagram!!.login()
-            if (save) {
+            val loginSuccess = instagramLoginResult.status == "ok"
+            if (loginSuccess && save) {
                 doAsync {
                     saveCredentials(prefs, username, password)
                 }
             }
-            return instagramLoginResult.status == "ok"
+            return loginSuccess
         }
 
         fun loginFromSharedPrefs(prefs: SharedPreferences): Boolean {
@@ -230,6 +230,7 @@ class Util {
             Uri.parse("https://www.instagram.com/$username/")
         )
 
-
+        fun usernameIsValid(username: String): Boolean =
+            username.length <= 30 && username.matches("[a-z0-9._]+".toRegex())
     }
 }

@@ -9,6 +9,7 @@ import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_login.*
 import me.olliechick.instagramunfollowers.Util.Companion.TAG
 import me.olliechick.instagramunfollowers.Util.Companion.showInternetConnectivityErrorDialog
+import me.olliechick.instagramunfollowers.Util.Companion.usernameIsValid
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -30,10 +31,6 @@ class LoginActivity : Activity() {
         log_in_button.setOnClickListener { login() }
     }
 
-    private fun validateLoginFields() {
-
-    }
-
     /** Called when the user taps the Log in button */
     private fun login() {
         val username_text = username.text.toString()
@@ -41,6 +38,7 @@ class LoginActivity : Activity() {
         val prefs = getSharedPreferences(Util.prefsFile, Context.MODE_PRIVATE)
         if (username_text.isEmpty()) emptyFieldError(username)
         else if (password_text.isEmpty()) emptyFieldError(password)
+        else if (!usernameIsValid(username_text)) invalidUsernameError()
         else {
             toast(getString(R.string.logging_in))
             //todo block UI to avoid user pressing button more than once (see how default login activity does it)
@@ -65,6 +63,10 @@ class LoginActivity : Activity() {
 
             }
         }
+    }
+
+    private fun invalidUsernameError() {
+        username.error = getString(R.string.username_invalid, username.text)
     }
 
     private fun emptyFieldError(editText: EditText) {

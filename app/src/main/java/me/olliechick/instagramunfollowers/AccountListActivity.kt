@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_account_list.*
 import me.olliechick.instagramunfollowers.Util.Companion.getAccount
 import me.olliechick.instagramunfollowers.Util.Companion.initialiseDb
+import me.olliechick.instagramunfollowers.Util.Companion.usernameIsValid
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -107,9 +108,5 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
 
             }
         }
-    }
-
-    private fun usernameIsValid(username: String): Boolean {
-        return username.length <= 30 && username.matches("[a-z0-9._]+".toRegex())
     }
 }
