@@ -95,7 +95,7 @@ class GetFollowersService : IntentService("GetFollowersService") {
         ids.forEach {
             Log.i(Util.TAG, "$it (type = ${it.javaClass.kotlin})")
         }
-        Log.i(TAG, "${followers.map { it }.toTypedArray()[0]}")
+        if (followers.isNotEmpty()) Log.i(TAG, "${followers.map { it }.toTypedArray()[0]}")
         db.followerDao().insertAll(*followers.map { it }.toTypedArray())
     }
 
