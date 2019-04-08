@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -34,6 +35,12 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
         fab.setOnClickListener { openAddAccountDialog() }
 
         populateList()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menu?.findItem(R.id.action_delete)?.isVisible = true
+        return true
     }
 
     var accounts: ArrayList<Account> = arrayListOf()
