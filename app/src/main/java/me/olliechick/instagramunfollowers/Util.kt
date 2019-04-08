@@ -161,7 +161,7 @@ class Util {
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
                 val intervalMillis = minutesToAlarmInterval(prefs.getString("refresh_rate", ""))
-                Log.i(TAG, "Notifs set to every $intervalMillis millis.")
+                if (Debug.LOG) Log.i(TAG, "Notifs set to every $intervalMillis millis.")
 
                 alarmManager.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,

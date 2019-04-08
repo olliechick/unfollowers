@@ -66,7 +66,7 @@ class LoginActivity : Activity() {
                     }
 
                 } catch (e: IOException) {
-                    Log.i(TAG, "${e.message}")
+                    if (Debug.LOG) Log.i(TAG, "${e.message}")
                     uiThread {
                         showInternetConnectivityErrorDialog(context, ::login)
                     }

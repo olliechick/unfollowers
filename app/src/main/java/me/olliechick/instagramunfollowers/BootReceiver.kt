@@ -9,9 +9,9 @@ import me.olliechick.instagramunfollowers.Util.Companion.TAG
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG, "Got ${intent.action}.")
+        if (Debug.LOG) Log.i(TAG, "Got ${intent.action}.")
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            Log.i(TAG, "Got boot event.")
+            if (Debug.LOG) Log.i(TAG, "Got boot event.")
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
             Util.scheduleGetFollowers(context)
             if (prefs.getBoolean("refresh_on_startup", true)) {

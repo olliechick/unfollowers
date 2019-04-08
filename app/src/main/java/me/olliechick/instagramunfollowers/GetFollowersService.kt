@@ -31,7 +31,7 @@ class GetFollowersService : IntentService("GetFollowersService") {
         followingIds = if (followingId.toInt() == -1) intent.getLongArrayExtra("ids")
         else longArrayOf(followingId)
 
-        if (followingIds == null) Log.e(Util.TAG, "No id or ids in GetFollowersService")
+        if (followingIds == null) if (Debug.LOG) Log.e(Util.TAG, "No id or ids in GetFollowersService")
         else {
             val followersMap = mutableMapOf<Long, List<Follower>>()
             val now = OffsetDateTime.now()
@@ -43,14 +43,14 @@ class GetFollowersService : IntentService("GetFollowersService") {
             db = initialiseDb(applicationContext)
             try {
                 followingIds!!.forEach {
-                    Log.i(TAG, "Saving followers for $it.")
+                    if (Debug.LOG) Log.i(TAG, "Saving followers for $it.")
                     saveFollowers(followersMap[it]!!)
-                    Log.i(TAG, "Updating last updated time.")
+                    if (Debug.LOG) Log.i(TAG, "Updating last updated time.")
                     updateLastUpdated(it, now)
                 }
                 publishResults(true)
             } catch (e: SQLiteException) {
-                Log.e(Util.TAG, "Error when getting followers: ${e.message}")
+                if (Debug.LOG) Log.e(Util.TAG, "Error when getting followers: ${e.message}")
                 publishResults(false, e)
             } finally {
                 db.close()
@@ -75,7 +75,7 @@ class GetFollowersService : IntentService("GetFollowersService") {
             val loginSuccess = loginFromSharedPrefs(getSharedPreferences(prefsFile, Context.MODE_PRIVATE))
             if (!loginSuccess) throw IllegalArgumentException("Login failed.")
             if (Util.instagram == null) {
-                Log.wtf(Util.TAG, "instagram is still null after logging in from sharedprefs was successful")
+                if (Debug.LOG) Log.wtf(Util.TAG, "instagram is still null after logging in from sharedprefs was successful")
                 return listOf()
             }
         }
@@ -93,15 +93,15 @@ class GetFollowersService : IntentService("GetFollowersService") {
     private fun saveFollowers(followers: List<Follower>) {
         val ids = db.accountDao().getIds()
         ids.forEach {
-            Log.i(Util.TAG, "$it (type = ${it.javaClass.kotlin})")
+            if (Debug.LOG) Log.i(Util.TAG, "$it (type = ${it.javaClass.kotlin})")
         }
-        if (followers.isNotEmpty()) Log.i(TAG, "${followers.map { it }.toTypedArray()[0]}")
+        if (followers.isNotEmpty()) if (Debug.LOG) Log.i(TAG, "${followers.map { it }.toTypedArray()[0]}")
         db.followerDao().insertAll(*followers.map { it }.toTypedArray())
     }
 
 
     private fun publishResults(saved: Boolean, e: Exception?) {
-        Log.i(TAG, "Publishing")
+        if (Debug.LOG) Log.i(TAG, "Publishing")
         val intent = Intent(NOTIFICATION)
         intent.putExtra("saved", saved)
         if (e != null) intent.putExtra("exception", e)
