@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.NavUtils
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_unfollowers_list.*
@@ -36,6 +37,7 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
 
         val actionBar = supportActionBar
         actionBar?.title = "${getString(R.string.app_name)}: $followingUsername"
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
         fab.setOnClickListener { refresh() }
 
@@ -59,6 +61,11 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
 
             unfollowerList.adapter?.notifyDataSetChanged() //todo just notify there was one deleted
             true
+        }
+        R.id.home -> {
+
+            NavUtils.navigateUpFromSameTask(this);
+            true;
         }
         else -> super.onOptionsItemSelected(item)
     }

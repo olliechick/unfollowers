@@ -46,7 +46,11 @@
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".AccountListActivity" />
-        <activity android:name=".UnfollowersListActivity" />
+        <activity android:name=".UnfollowersListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="me.olliechick.instagramunfollowers.AccountListActivity" />
+        </activity>
 
         <service android:name=".GetFollowersService" />
 
