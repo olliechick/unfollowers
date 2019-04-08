@@ -30,7 +30,7 @@
     <string name="refresh_already">Actualiser déjà en cours…</string>
     <string name="refreshing">Actualiser…</string>
     <string name="done">Translations of actualiser</string>
-    <string name="db_error">VerbFrequency</string>
+    <string name="db_error">Une erreur s\'est produite dans la base de données lors de la tentative d\'enregistrement d\'un nouvel ensemble d\'adeptes.\\n\\nDétails de l\'erreur:\\n\\n%1$s\\n\\n% 2 $ s</string>
     <string name="email_subject">actualize</string>
     <string name="enter_a_username">Entrez un nom d\'utilisateur…</string>
     <string name="automatically_check">Rechercher automatiquement les nouveaux désabonnés</string>
@@ -48,8 +48,33 @@
     <string name="send">Envoyez</string>
     <string name="retry">Réessayez</string>
     <string name="dismiss">Rejetez</string>
-    <string name="close_app">Fermer l\'application</string>
-    <string name="close_app">Fermez l\'app</string>
     <string name="please_connect">Veuillez vous connecter à Internet et réessayer.</string>
     <string name="internet_issue">Problème de connectivité Internet</string>
+    <string name="are_you_sure_add">Êtes-vous sûr de vouloir ajouter %1$s (%2$s)?</string>
+    <string name="close_app">Fermez l\'app</string>
+    <string name="large_follower_warning">Ce compte a %1$s abonnés, il faut donc environ %2$s pour actualiser les non-abonnés.</string>
+    <plurals name="second">
+        <item quantity="one">%d seconde</item>
+        <item quantity="other">%d secondes</item>
+    </plurals>
+    <plurals name="minute">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="one">%d heure</item>
+        <item quantity="other">%d heures</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="one">%d jour</item>
+        <item quantity="other">%d jours</item>
+    </plurals>
+    <plurals name="thousand">
+        <item quantity="one">%d mille</item>
+        <item quantity="other">%d mille</item>
+    </plurals>
+    <plurals name="million">
+        <item quantity="one">%d million</item>
+        <item quantity="other">%d millions</item>
+    </plurals>
 </resources>
