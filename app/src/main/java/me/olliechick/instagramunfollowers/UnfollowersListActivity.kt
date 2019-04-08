@@ -47,6 +47,31 @@ class UnfollowersListActivity : AppCompatActivityWithMenu() {
         return true
     }
 
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_delete -> {
+            deleteItem()
+            unfollowerList.adapter?.notifyDataSetChanged() //todo just notify there was one deleted
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun deleteItem() {
+        val context = this
+        doAsync {
+            val db = Util.initialiseDb(applicationContext)
+            db.accountDao().delete(followingUsername)
+            db.close()
+            uiThread {
+                val intent = Intent(context, AccountListActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         registerReceiver(

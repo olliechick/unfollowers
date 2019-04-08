@@ -1,6 +1,7 @@
 package me.olliechick.instagramunfollowers
 
 import androidx.room.*
+import androidx.room.ForeignKey.CASCADE
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -15,7 +16,7 @@ data class Account(
 
 @Entity(
     tableName = "followers", primaryKeys = ["id", "timestamp"],
-    foreignKeys = [ForeignKey(entity = Account::class, parentColumns = ["id"], childColumns = ["following_id"])]
+    foreignKeys = [ForeignKey(onDelete=CASCADE, entity = Account::class, parentColumns = ["id"], childColumns = ["following_id"])]
 )
 data class Follower(
     var id: Long,
@@ -44,6 +45,9 @@ interface AccountDao {
 
     @Query("SELECT last_updated FROM accounts WHERE id = :followingId")
     fun getLatestUpdateTime(followingId: Long): OffsetDateTime
+
+    @Query("DELETE FROM accounts WHERE username = :username")
+    fun delete(username: String)
 }
 
 @Dao
