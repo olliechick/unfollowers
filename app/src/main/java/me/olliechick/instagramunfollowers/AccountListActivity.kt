@@ -179,6 +179,8 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
                 accounts.add(account)
                 Toast.makeText(context, getString(R.string.added, account.name), Toast.LENGTH_SHORT).show()
                 accountList.adapter?.notifyDataSetChanged() //todo just notify there was one added
+                accountList.visibility = View.VISIBLE
+                empty_view.visibility = View.GONE
             }
 
             val intent = Intent(context, GetFollowersService::class.java)
