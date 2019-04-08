@@ -9,7 +9,7 @@
     <string name="error_empty_field">Ce champ est requis</string>
     <string name="action_settings">Configuration</string>
     <string name="action_log_out">Déconnexion</string>
-    <string name="error_getting_account">Desolee, mais %1$s pas existe.</string>
+    <string name="error_getting_account">Désolé, une erreur s\'est produite lors de l\'ajout de %1$s. Peut-être que cet utilisateur n\'existe pas?</string>
     <string name="action_help">Aidez</string>
     <string name="account_format">%1$s (%2$s)</string>
     <string name="accounts">Comptes</string>
@@ -29,9 +29,8 @@
     <string name="username_and_password_broken">Votre nom d\'utilisateur et mot de passe pour %1$s ne fonctionnent plus :(</string>
     <string name="refresh_already">Actualiser déjà en cours…</string>
     <string name="refreshing">Actualiser…</string>
-    <string name="done">Translations of actualiser</string>
+    <string name="done">Fini!</string>
     <string name="db_error">Une erreur s\'est produite dans la base de données lors de la tentative d\'enregistrement d\'un nouvel ensemble d\'adeptes.\\n\\nDétails de l\'erreur:\\n\\n%1$s\\n\\n% 2 $ s</string>
-    <string name="email_subject">actualize</string>
     <string name="enter_a_username">Entrez un nom d\'utilisateur…</string>
     <string name="automatically_check">Rechercher automatiquement les nouveaux désabonnés</string>
     <string name="enable_auto_refresh">Activer l\'actualisation automatique</string>
