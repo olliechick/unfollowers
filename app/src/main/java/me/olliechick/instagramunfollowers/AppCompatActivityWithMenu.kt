@@ -7,7 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 
-open class AppCompatActivityWithMenu  : AppCompatActivity() {
+open class AppCompatActivityWithMenu : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -18,8 +18,8 @@ open class AppCompatActivityWithMenu  : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_settings -> {
-          val intent = Intent(this, SettingsActivity::class.java)
-          startActivity(intent)
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
             true
         }
 
@@ -39,9 +39,8 @@ open class AppCompatActivityWithMenu  : AppCompatActivity() {
             startActivity(intent)
             true
         }
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
+        else -> super.onOptionsItemSelected(item)
+
     }
 
 
