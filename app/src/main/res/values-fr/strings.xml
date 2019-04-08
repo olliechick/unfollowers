@@ -15,8 +15,8 @@
     <string name="accounts">Comptes</string>
     <string name="added">%1$s ajouté</string>
     <string name="add_account">Ajouter un compte:</string>
-    <string name="add">Ajoute</string>
-    <string name="cancel">Annule</string>
+    <string name="add">Ajoutez</string>
+    <string name="cancel">Annulez</string>
     <string name="just_unfollowed_you">%1$s (%2$s) vient de vous désabonner!</string>
     <string name="tap_to_go_to_profile">Appuyez ici pour accéder à leur profil.</string>
     <string name="logging_in">Se connecter…</string>
@@ -43,4 +43,13 @@
     <string name="auto_refresh">Actualisation automatique</string>
     <string name="username_invalid">Désolé, \"%1$s\" n\'est pas un nom d\'utilisateur valide. Les noms d\'utilisateur valides ne contiennent que des lettres, des chiffres, des traits de soulignement et des points.</string>
     <string name="adding_username">Ajout de %1$s…</string>
+    <string name="an_error_occurred">Une erreur est survenue</string>
+    <string name="send_to_devs">Voulez-vous envoyer les détails aux développeurs?</string>
+    <string name="send">Envoyez</string>
+    <string name="retry">Réessayez</string>
+    <string name="dismiss">Rejetez</string>
+    <string name="close_app">Fermer l\'application</string>
+    <string name="close_app">Fermez l\'app</string>
+    <string name="please_connect">Veuillez vous connecter à Internet et réessayer.</string>
+    <string name="internet_issue">Problème de connectivité Internet</string>
 </resources>

@@ -44,4 +44,12 @@
     <string name="refresh_rate">Refresh rate</string>
     <string name="username_invalid">Sorry, but \"%1$s\" is not a valid username. Valid usernames only contain letters, numbers, underscores, and periods.</string>
     <string name="adding_username">Adding %1$s…</string>
+    <string name="an_error_occurred">An error occurred</string>
+    <string name="send_to_devs">Do you want to send the details to the developers?</string>
+    <string name="send">Send</string>
+    <string name="internet_issue">Internet connectivity issue</string>
+    <string name="please_connect">Please connect to the internet and try again.</string>
+    <string name="retry">Retry</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="close_app">Close app</string>
 </resources>

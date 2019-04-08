@@ -118,9 +118,9 @@ class Util {
 
         fun showErrorDialog(details: String, context: Context) {
             val builder = AlertDialog.Builder(context)
-            builder.setTitle("An error occurred")
-            builder.setMessage("Do you want to send the details to the developers?")
-            builder.setPositiveButton("Send") { _, _ ->
+            builder.setTitle(context.getString(R.string.an_error_occurred))
+            builder.setMessage(context.getString(R.string.send_to_devs))
+            builder.setPositiveButton(context.getString(R.string.send)) { _, _ ->
                 val emailIntent = generateEmailErrorDetailsIntent(
                     details
                 )
@@ -132,19 +132,19 @@ class Util {
 
         fun showInternetConnectivityErrorDialog(context: Context, retry: () -> Unit) {
             val builder = AlertDialog.Builder(context)
-            builder.setTitle("Internet connectivity issue")
-            builder.setMessage("Please connect to the internet and try again.")
-            builder.setPositiveButton("Retry") { _, _ -> retry() }
-            builder.setNegativeButton("Dismiss") { dialog, _ -> dialog.cancel() }
+            builder.setTitle(context.getString(R.string.internet_issue))
+            builder.setMessage(context.getString(R.string.please_connect))
+            builder.setPositiveButton(context.getString(R.string.retry)) { _, _ -> retry() }
+            builder.setNegativeButton(context.getString(R.string.dismiss)) { dialog, _ -> dialog.cancel() }
             builder.show()
         }
 
         fun showInternetConnectivityErrorDialog(context: Context, retry: () -> Unit, closeApp: () -> Unit) {
             val builder = AlertDialog.Builder(context)
-            builder.setTitle("Internet connectivity issue")
-            builder.setMessage("Please connect to the internet and try again.")
-            builder.setPositiveButton("Retry") { _, _ -> retry() }
-            builder.setNegativeButton("Close app") { _, _ -> closeApp() }
+            builder.setTitle(context.getString(R.string.internet_issue))
+            builder.setMessage(context.getString(R.string.please_connect))
+            builder.setPositiveButton(R.string.retry) { _, _ -> retry() }
+            builder.setNegativeButton(context.getString(R.string.close_app)) { _, _ -> closeApp() }
             builder.show()
         }
 
