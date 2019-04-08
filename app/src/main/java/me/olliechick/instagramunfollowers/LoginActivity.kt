@@ -15,6 +15,10 @@ import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import java.io.IOException
 import me.olliechick.instagramunfollowers.Util.Companion.login as login_backend
+import android.text.method.PasswordTransformationMethod
+import android.graphics.Typeface
+
+
 
 
 /**
@@ -26,9 +30,17 @@ class LoginActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        //todo autofill from shared prefs if they aren't null
-
+        fill_fields_from_shared_prefs()
         log_in_button.setOnClickListener { login() }
+    }
+
+    private fun fill_fields_from_shared_prefs() {
+        val prefs = getSharedPreferences(Util.prefsFile, Context.MODE_PRIVATE)
+        val prefsUsername = prefs.getString("username", "")
+        val prefsPassword = prefs.getString("password", "")
+
+        if (prefsUsername != null) username.setText(prefsUsername)
+        if (prefsPassword != null) password.setText(prefsPassword)
     }
 
     /** Called when the user taps the Log in button */
