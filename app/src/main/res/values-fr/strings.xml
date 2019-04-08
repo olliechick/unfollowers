@@ -76,4 +76,5 @@
         <item quantity="one">%d million</item>
         <item quantity="other">%d millions</item>
     </plurals>
+    <string name="username_already_added">Vous avez déjà ajouté %1$s!</string>
 </resources>

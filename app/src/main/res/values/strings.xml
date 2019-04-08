@@ -54,6 +54,7 @@
     <string name="close_app">Close app</string>
     <string name="are_you_sure_add">Are you sure you want to add %1$s (%2$s)?</string>
     <string name="large_follower_warning">That account has %1$s followers so it could take around %2$s to refresh unfollowers.</string>
+    <string name="username_already_added">You\'ve already added %1$s!</string>
     <plurals name="second">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

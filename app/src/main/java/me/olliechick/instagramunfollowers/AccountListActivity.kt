@@ -22,6 +22,7 @@ import java.time.OffsetDateTime
 
 class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragment.AddAccountDialogListener {
     private lateinit var db: AppDatabase
+    private var allAccounts: List<Account> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +54,7 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
 
         doAsync {
             db = initialiseDb(applicationContext)
-            val allAccounts = db.accountDao().getAll()
+            allAccounts = db.accountDao().getAll()
             uiThread {
                 accounts = ArrayList(allAccounts)
                 if (accounts.size == 0) {
@@ -75,6 +76,7 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
     override fun onAccountAdded(username: String) {
         // username had already been made lowercase
         if (!usernameIsValid(username)) toast(getString(R.string.username_invalid, username))
+        if (accountAlreadyAdded(username)) toast(getString(R.string.username_already_added, username))
         else {
             val context = this
             doAsync {
@@ -100,6 +102,11 @@ class AccountListActivity : AppCompatActivityWithMenu(), AddAccountDialogFragmen
 
             }
         }
+    }
+
+    private fun accountAlreadyAdded(username: String): Boolean {
+        allAccounts.forEach { if (it.username == username) return true }
+        return false
     }
 
     private fun showAddAccountConfirmationDialog(account: Account, followerCount: Int, context: Context) {
