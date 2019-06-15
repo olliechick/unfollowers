@@ -31,9 +31,8 @@ class FollowerAdapter(
         val username = followers[i].username
         val created = followers[i].timestamp
 
-        var displayText  = ""
-        if (name.replace("\\s".toRegex(), "") == "") displayText = username
-        else displayText = context.getString(R.string.account_format, name, username)
+        var displayText = if (name.replace("\\s".toRegex(), "") == "") username
+        else context.getString(R.string.account_format, name, username)
         displayText += "\n(${created.format(DateTimeFormatter.ofPattern("hh:mm:ss d MMM"))})"
 
         holder.accountName.text = displayText

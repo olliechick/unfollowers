@@ -44,7 +44,7 @@ class AddAccountDialogFragment : DialogFragment() {
             // Set up the buttons
             builder.setPositiveButton(
                 getString(R.string.add)
-            ) { dialog, _ ->  run {
+            ) { _, _ ->  run {
                 listener.onAccountAdded(view.input?.text.toString().toLowerCase()) } }
 
             builder.setNegativeButton(

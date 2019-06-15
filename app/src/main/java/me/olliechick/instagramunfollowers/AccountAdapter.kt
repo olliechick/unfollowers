@@ -30,8 +30,7 @@ class AccountAdapter(
         val name = accounts[i].name
         val username = accounts[i].username
 
-        var displayText = ""
-        displayText = if (name.replace("\\s".toRegex(), "") == "") username
+        var displayText = if (name.replace("\\s".toRegex(), "") == "") username
         else context.getString(R.string.account_format, name, username)
 
         holder.accountName.text = displayText
