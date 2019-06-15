@@ -1,12 +1,15 @@
 package me.olliechick.instagramunfollowers
 
-import android.app.*
+import android.app.Activity
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
-import androidx.preference.PreferenceManager
+import me.olliechick.instagramunfollowers.Util.Companion.TAG
 import me.olliechick.instagramunfollowers.Util.Companion.loginFromSharedPrefs
 import me.olliechick.instagramunfollowers.Util.Companion.prefsFile
 import me.olliechick.instagramunfollowers.Util.Companion.setDefaults
@@ -25,9 +28,10 @@ class SplashScreenActivity : Activity() {
 //        val intent = Intent(applicationContext, AlarmReceiver::class.java).let {
 //            PendingIntent.getBroadcast(applicationContext, 0, it, 0)
 //        }
-        registerReceiver(getFollowersReceiver, IntentFilter(
+        registerReceiver(
+            getFollowersReceiver, IntentFilter(
                 GetFollowersService.NOTIFICATION
-                )
+            )
         )
         setDefaults(this)
         createNotificationChannel()
@@ -36,13 +40,18 @@ class SplashScreenActivity : Activity() {
 
     override fun onStop() {
         super.onStop()
-        unregisterReceiver(getFollowersReceiver)
+        try {
+            unregisterReceiver(getFollowersReceiver)
+        } catch (e: IllegalArgumentException) {
+            if (Debug.LOG) Log.i(TAG, "getFollowersReceiver tried to be unregistered without first being registered.")
+        }
     }
 
     private fun createNotificationChannel() {
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel = NotificationChannel(Notification.CATEGORY_SOCIAL, getString(R.string.new_unfollowers), importance)
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
 
